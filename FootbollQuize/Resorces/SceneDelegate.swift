@@ -74,9 +74,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [
             homeNavController,
-            quizzesNavController,
             personalTrainingNavController,
             trainingSkillsNavController,
+            quizzesNavController,
             profileNavController
         ]
         
