@@ -8,6 +8,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+        self.window = UIWindow(windowScene: windowScene)
+        
+        // 1. Создаем Splash Controller
+        let splashVC = SplashVC()
+        
+        // 2. Настраиваем кложур, который будет вызван после задержки
+        splashVC.actionOnDismiss = { [weak self] in
+            guard let self = self else { return }
+            
+            // Плавная смена корневого контроллера
+            UIView.transition(with: self.window!,
+                              duration: 0.5,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                self.window?.rootViewController = self.createMainTabBar()
+            }, completion: nil)
+        }
+        
+        // 3. Устанавливаем SplashVC как корневой контроллер окна
+        self.window?.rootViewController = splashVC
+        self.window?.makeKeyAndVisible()
+    }
+    
+    // Приватный метод для создания основного Tab Bar Controller
+    private func createMainTabBar() -> UITabBarController {
+        
         // 1. Создание экземпляров контроллеров
         let homeVC = HomeVC()
         let quizzesVC = QuizzesVC()
@@ -16,7 +42,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let profileVC = ProfileVC()
         
         // 2. Оборачивание каждого контроллера в UINavigationController
-        // Это позволит каждому экрану иметь свою навигационную панель
         let homeNavController = UINavigationController(rootViewController: homeVC)
         let quizzesNavController = UINavigationController(rootViewController: quizzesVC)
         let personalTrainingNavController = UINavigationController(rootViewController: personalTrainingVC)
@@ -24,7 +49,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let profileNavController = UINavigationController(rootViewController: profileVC)
         
         // 3. Настройка Tab Bar Items (названия и иконки)
-        // Иконки системы SF Symbols используются для примера
         
         // HomeVC (Home)
         homeVC.title = "Home"
@@ -50,15 +74,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [
             homeNavController,
-            trainingSkillsNavController,
-            personalTrainingNavController,
             quizzesNavController,
+            personalTrainingNavController,
+            trainingSkillsNavController,
             profileNavController
         ]
         
-        // 5. Установка Tab Bar Controller как корневого контроллера окна
-        self.window = UIWindow(windowScene: windowScene)
-        self.window?.rootViewController = tabBarController
-        self.window?.makeKeyAndVisible()
+        return tabBarController
     }
 }
