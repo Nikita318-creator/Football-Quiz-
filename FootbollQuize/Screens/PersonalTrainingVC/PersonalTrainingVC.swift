@@ -1,8 +1,6 @@
 import UIKit
 import SnapKit
 
-// MARK: - PersonalTrainingVC
-
 class PersonalTrainingVC: UIViewController {
 
     // MARK: - Data
@@ -39,6 +37,13 @@ class PersonalTrainingVC: UIViewController {
         label.text = "TRAINING"
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = .white
+        
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOpacity = 1.0
+        label.layer.shadowRadius = 4
+        label.layer.shadowOffset = CGSize(width: 0, height: 2)
+        label.layer.masksToBounds = false
+        
         return label
     }()
 
@@ -47,6 +52,13 @@ class PersonalTrainingVC: UIViewController {
         label.text = "New exercises!"
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .white
+        
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOpacity = 1.0
+        label.layer.shadowRadius = 4
+        label.layer.shadowOffset = CGSize(width: 0, height: 2)
+        label.layer.masksToBounds = false
+        
         return label
     }()
 
@@ -94,10 +106,9 @@ class PersonalTrainingVC: UIViewController {
         // 1. Добавляем Header Image
         view.addSubview(headerImageView)
         
-        // Картинка прибита к верху (включая зону статус бара)
         headerImageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(280) // Высота как на дизайне (~30-35% экрана)
+            make.height.equalTo(310)
         }
         
         // 2. Добавляем тексты на картинку
@@ -167,8 +178,8 @@ extension PersonalTrainingVC: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let item = trainingItems[indexPath.row]
-        print("Selected training: \(item.title)")
-        // Логика перехода внутрь
+        let personalTrainingShortPassVC = PersonalTrainingShortPassVC()
+        personalTrainingShortPassVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(personalTrainingShortPassVC, animated: true)
     }
 }
