@@ -6,6 +6,9 @@ class SoccerQuizVC: UIViewController {
     // MARK: - UI Components
     
     var viewModel = SoccerQuizViewModel()
+    var currentQuestion = 0
+    
+    private var currentSelectedOption = 1
     
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
@@ -45,7 +48,6 @@ class SoccerQuizVC: UIViewController {
     
     private let questionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Which part of the foot is usually used for accurate passing?"
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = .primary
         label.numberOfLines = 0
@@ -158,7 +160,9 @@ class SoccerQuizVC: UIViewController {
     // MARK: - Data & Logic
     
     private func setupData() {
-        let options = ["Heel", "Outside of the foot", "Inside of the foot", "Toe"]
+        questionLabel.text = viewModel.model[currentQuestion].question
+        
+        let options = viewModel.model[currentQuestion].options
         
         for (index, text) in options.enumerated() {
             let optionView = QuizOptionView()
@@ -177,7 +181,7 @@ class SoccerQuizVC: UIViewController {
         }
         
         if optionViews.count > 1 {
-            selectOption(at: 1)
+            selectOption(at: currentSelectedOption)
         }
     }
     
@@ -189,18 +193,19 @@ class SoccerQuizVC: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapCheck() {
-        // ИМИТАЦИЯ ПРОВЕРКИ (ЗАГЛУШКА)
-        let isCorrect = Bool.random() // test111 Случайный выбор для теста
-        let correctAnswerText = "Inside of the foot" // Пример правильного ответа
+        let correctOption = viewModel.model[currentQuestion].correctOption
+        let isCorrect = correctOption == currentSelectedOption
+        let correctAnswerText = "Option \(correctOption + 1)" // так как с 0 начинается счет
         
         // 1. Конфигурируем вьюшку
         feedbackView.configure(isCorrect: isCorrect, correctAnswer: correctAnswerText)
-        
+
         // 2. Анимация смены состояния
         UIView.animate(withDuration: 0.3) {
             self.checkButton.alpha = 0
             self.feedbackView.isHidden = false
             self.feedbackView.alpha = 1
+            self.optionViews[self.currentSelectedOption].updateAppearanceOnCheckTapped(isCorrect)
         }
         
         // 3. Блокируем нажатия на ответы, пока показывается результат
@@ -228,6 +233,7 @@ class SoccerQuizVC: UIViewController {
     
     @objc private func optionTapped(_ sender: UITapGestureRecognizer) {
         guard let tappedView = sender.view as? QuizOptionView else { return }
+        currentSelectedOption = tappedView.tag
         selectOption(at: tappedView.tag)
     }
 }

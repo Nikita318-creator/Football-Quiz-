@@ -59,15 +59,12 @@ class QuizFeedbackView: UIView {
         
         // Констрейнты
         
-        // Белая кнопка сверху
         actionButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(56)
         }
         
-        // Иконка и текст статуса снизу
-        // Группируем их визуально по центру под кнопкой
         statusLabel.snp.makeConstraints { make in
             make.top.equalTo(actionButton.snp.bottom).offset(20)
             make.centerX.equalToSuperview().offset(10) // Чуть сдвинем вправо из-за иконки
@@ -93,9 +90,8 @@ class QuizFeedbackView: UIView {
             actionButton.setTitle("CONTINUE", for: .normal)
             actionButton.setTitleColor(.success, for: .normal)
             
-            // Используем системные иконки SF Symbols для примера
             statusLabel.text = "Correct!"
-            iconImageView.image = UIImage(systemName: "face.smiling.inverse") // Или твоя картинка
+            iconImageView.image = UIImage(named: "emoji-happy")
             
             subtitleLabel.isHidden = true
             
@@ -105,7 +101,7 @@ class QuizFeedbackView: UIView {
             actionButton.setTitleColor(.error, for: .normal)
             
             statusLabel.text = "Incorrect"
-            iconImageView.image = UIImage(systemName: "exclamationmark.circle.fill") // Или твоя картинка
+            iconImageView.image = UIImage(named: "emoji-sad")
             
             subtitleLabel.text = "Correct answer: \(correctAnswer)"
             subtitleLabel.isHidden = false

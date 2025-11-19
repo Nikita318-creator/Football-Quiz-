@@ -79,6 +79,8 @@ class QuizOptionView: UIView {
     }
     
     private func updateAppearance() {
+        radioCenterDot.backgroundColor = .primary
+        
         if isSelectedOption {
             
             // 1. Фон самой плашки темный
@@ -106,5 +108,12 @@ class QuizOptionView: UIView {
             
             radioCenterDot.isHidden = true
         }
+    }
+    
+    func updateAppearanceOnCheckTapped(_ isCorrect: Bool) {
+        backgroundColor = isCorrect ? UIColor.success : UIColor.error
+        titleLabel.textColor = .white
+        radioCircle.layer.borderColor = UIColor.white.cgColor
+        radioCenterDot.backgroundColor = .white
     }
 }
