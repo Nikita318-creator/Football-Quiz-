@@ -5,10 +5,11 @@ class SoccerQuizVC: UIViewController {
     
     // MARK: - UI Components
     
-    var viewModel = SoccerQuizViewModel()
+    let viewModel: SoccerQuizViewModel
     var currentQuestion = 0
     
     private var currentSelectedOption = 1
+    private let soccerQuizService = SoccerQuizService()
     
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
@@ -30,7 +31,7 @@ class SoccerQuizVC: UIViewController {
         let progress = UIProgressView(progressViewStyle: .default)
         progress.progressTintColor = .primary
         progress.trackTintColor = .white
-        progress.progress = 0.35 // test111
+        progress.progress = 0.0
         progress.layer.cornerRadius = 8
         progress.layer.masksToBounds = true
         progress.layer.borderWidth = 2
@@ -78,13 +79,43 @@ class SoccerQuizVC: UIViewController {
     private lazy var feedbackView: QuizFeedbackView = {
         let view = QuizFeedbackView()
         view.isHidden = true // Скрыта по умолчанию
-        view.onActionTap = { [weak self] in
-            self?.resetState()
+        view.onActionTap = { [weak self] isCorrect in
+            guard let self else { return }
+            
+            self.resetState()
+            
+            if isCorrect {
+                currentQuestion += 1
+                guard currentQuestion < viewModel.model.count else {
+                    navigationController?.popViewController(animated: true)
+                    return
+                }
+                progressBar.progress = Float(currentQuestion) / Float(viewModel.model.count)
+                setupData()
+                answersStackView.isUserInteractionEnabled = true
+                
+                soccerQuizService.save(
+                    LastSoccerQuizData(
+                        modelIndex: viewModel.currentModelNumber,
+                        question: viewModel.model[currentQuestion].question,
+                        questionNumber: currentQuestion
+                    )
+                )
+            }
         }
         return view
     }()
     
     private var optionViews: [QuizOptionView] = []
+    
+    init(viewModel: SoccerQuizViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     
@@ -97,6 +128,10 @@ class SoccerQuizVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    func setProgress() {
+        progressBar.progress = Float(currentQuestion) / Float(viewModel.model.count)
     }
     
     // MARK: - Setup UI
@@ -147,12 +182,9 @@ class SoccerQuizVC: UIViewController {
             make.height.equalTo(56)
         }
         
-        // Feedback View (крепим туда же, но высота может быть больше)
         feedbackView.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             make.left.right.equalToSuperview().inset(20)
-            // Высоту не задаем жестко, она определится контентом,
-            // но можно задать минимальную
             make.height.greaterThanOrEqualTo(140)
         }
     }
@@ -160,6 +192,12 @@ class SoccerQuizVC: UIViewController {
     // MARK: - Data & Logic
     
     private func setupData() {
+        answersStackView.arrangedSubviews.forEach { view in
+            answersStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        optionViews = []
+        
         questionLabel.text = viewModel.model[currentQuestion].question
         
         let options = viewModel.model[currentQuestion].options

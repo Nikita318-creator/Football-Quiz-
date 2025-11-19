@@ -3,7 +3,9 @@ import SnapKit
 
 class QuizFeedbackView: UIView {
     
-    var onActionTap: (() -> Void)?
+    var onActionTap: ((Bool) -> Void)?
+    
+    var isCorrect = false
     
     // UI Elements
     private let actionButton: UIButton = {
@@ -85,6 +87,8 @@ class QuizFeedbackView: UIView {
     }
     
     func configure(isCorrect: Bool, correctAnswer: String = "") {
+        self.isCorrect = isCorrect
+        
         if isCorrect {
             backgroundColor = .success
             actionButton.setTitle("CONTINUE", for: .normal)
@@ -109,6 +113,6 @@ class QuizFeedbackView: UIView {
     }
     
     @objc private func didTapAction() {
-        onActionTap?()
+        onActionTap?(isCorrect)
     }
 }

@@ -12,12 +12,15 @@ class HomeVC: UIViewController {
         TrainingItem(title: "Short pass training", durationMinutes: 7)
     ]
     
-    private let quizData = QuizModel(
+    private var quizData = QuizModel(
         currentProgress: 1,
         totalQuestions: 50,
         continueText: "Continue quiz",
-        subContinueText: "Which part of the foot is usually used for accurate passing?"
+        subContinueText: ""
     )
+    private var soccerQuizData: LastSoccerQuizData?
+    
+    private let soccerQuizService = SoccerQuizService()
 
     // MARK: - UI Components
     
@@ -168,6 +171,21 @@ class HomeVC: UIViewController {
         updateQuizCard(with: quizData)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        guard let soccerQuizData = soccerQuizService.get() else { return }
+        
+        self.soccerQuizData = soccerQuizData
+        quizData = QuizModel(
+            currentProgress: soccerQuizData.questionNumber,
+            totalQuestions: SoccerQuizViewModel(currentModelNumber: soccerQuizData.modelIndex).model.count,
+            continueText: "Continue quiz",
+            subContinueText: soccerQuizData.question
+        )
+        updateQuizCard(with: quizData)
+    }
+    
     // MARK: - Setup UI
     
     private func setupUI() {
@@ -331,19 +349,15 @@ class HomeVC: UIViewController {
 
     @objc private func didTapSettings() {
         print("Tapped: Settings Button")
-//        let settingsVC = UIViewController()
-//        settingsVC.view.backgroundColor = .systemBackground
-//        settingsVC.title = "Settings"
-//        navigationController?.pushViewController(settingsVC, animated: true)
     }
     
     @objc private func didTapQuizCard() {
-        print("Tapped: Quiz Card")
-        // Логика перехода к экрану викторины
-//        let quizVC = UIViewController()
-//        quizVC.view.backgroundColor = .systemBackground
-//        quizVC.title = "Soccer Quiz"
-//        navigationController?.pushViewController(quizVC, animated: true)
+        guard let soccerQuizData else { return }
+        let soccerQuizVC = SoccerQuizVC(viewModel: SoccerQuizViewModel(currentModelNumber: soccerQuizData.modelIndex))
+        soccerQuizVC.currentQuestion = soccerQuizData.questionNumber
+        soccerQuizVC.setProgress()
+        soccerQuizVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(soccerQuizVC, animated: true)
     }
 }
 
@@ -378,11 +392,7 @@ extension HomeVC: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let training = trainingItems[indexPath.row]
-        print("Tapped Training Card: \(training.title)")
-        // Логика перехода к деталям тренировки
-
-        let soccerQuizVC = SoccerQuizVC()
+        let soccerQuizVC = SoccerQuizVC(viewModel: SoccerQuizViewModel(currentModelNumber: indexPath.row))
         soccerQuizVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(soccerQuizVC, animated: true)
     }
