@@ -47,10 +47,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // 3. Настройка Tab Bar Items (названия и иконки)
         // Важно: Иконки должны быть загружены как .alwaysTemplate, чтобы tintColor работал
-        
-        let activeColor = UIColor.red // Цвет для активного таба
-        let inactiveColor = UIColor.green // Ваш цвет для неактивного таба
-        
+                
         homeVC.title = "Home"
         homeNavController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "homeTab")?.withRenderingMode(.alwaysTemplate), tag: 0)
 
@@ -72,28 +69,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //  ✅ ИСПРАВЛЕННАЯ НАСТРОЙКА ЦВЕТОВ и ФОНА (через Appearance)
         // -----------------------------------------------------------------
         
+        let activeColor = UIColor.activeColor // Цвет для активного таба
         let appearance = UITabBarAppearance()
-        
-        // 1. Установка ФОНОВОГО ЦВЕТА Tab Bar
-        appearance.backgroundColor = .primary // <-- Фон таббара теперь PRIMARY
-        
-        // 2. Настройка активного (выбранного) таба: .red
+        appearance.backgroundColor = .primary
         appearance.stackedLayoutAppearance.selected.iconColor = activeColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: activeColor]
-        
-        // 3. Настройка неактивного (нормального) таба: secondTextColor
-        appearance.stackedLayoutAppearance.normal.iconColor = inactiveColor // <-- Исправленный цвет неактивного таба
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: inactiveColor]
-        
-        // 4. Применение настроек к Tab Bar
         tabBarController.tabBar.standardAppearance = appearance
         tabBarController.tabBar.scrollEdgeAppearance = appearance
-        
-        // Для старых iOS (до iOS 13), где Appearance может не работать полностью,
-        // сохраним настройки tintColor (хотя Appearance имеет приоритет)
         tabBarController.tabBar.tintColor = activeColor
-        // Note: unselectedItemTintColor не работает надежно с Appearance,
-        // поэтому мы полагаемся на appearance.stackedLayoutAppearance.normal.iconColor
 
         return tabBarController
     }
