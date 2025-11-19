@@ -1,0 +1,87 @@
+import UIKit
+import SnapKit
+
+class TrainingCardCell: UICollectionViewCell {
+    
+    static let reuseID = "TrainingCardCell"
+    
+    private let titleLabel = UILabel()
+    private let durationLabel = UILabel()
+    private let arrowImageView = UIImageView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupCell()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupCell() {
+        contentView.backgroundColor = .systemBackground // Фон ячейки
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true // Важно для скругления
+        
+        // Тень (для эффекта приподнятости)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.08
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 8
+        layer.masksToBounds = false // Тень должна быть видна за пределами contentView
+        
+        // Настройка Title Label
+        titleLabel.textColor = .textColor
+        titleLabel.font = .systemFont(ofSize: 18, weight: .regular)
+        titleLabel.numberOfLines = 0
+        
+        // Настройка Duration Label
+        durationLabel.textColor = .textColor
+        durationLabel.font = .systemFont(ofSize: 34, weight: .bold) // Крупный жирный шрифт
+        
+        // Настройка Minutes Label
+        let minutesTextLabel = UILabel()
+        minutesTextLabel.text = "Min"
+        minutesTextLabel.textColor = .secondTextColor
+        minutesTextLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        // Настройка Arrow Image
+        arrowImageView.image = UIImage(named: "arrowTopRight")
+        arrowImageView.tintColor = .primary
+        
+        // Добавление элементов
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(arrowImageView)
+        contentView.addSubview(durationLabel)
+        contentView.addSubview(minutesTextLabel)
+
+        // Констрейнты
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.left.equalToSuperview().offset(20)
+            make.right.equalTo(arrowImageView.snp.left).offset(-10)
+        }
+        
+        arrowImageView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.right.equalToSuperview().offset(-20)
+            make.width.height.equalTo(38)
+        }
+        
+        durationLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(20)
+            make.bottom.equalToSuperview().offset(-20)
+        }
+        
+        minutesTextLabel.snp.makeConstraints { make in
+            make.left.equalTo(durationLabel.snp.right).offset(2)
+            make.bottom.equalToSuperview().offset(-26)
+        }
+    }
+    
+    func configure(with item: TrainingItem) {
+        titleLabel.text = item.title
+        durationLabel.text = "\(item.durationMinutes)"
+    }
+}
+

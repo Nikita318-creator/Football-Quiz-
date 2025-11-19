@@ -28,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 3. Устанавливаем SplashVC как корневой контроллер окна
         self.window?.rootViewController = splashVC
+        self.window?.overrideUserInterfaceStyle = .light
         self.window?.makeKeyAndVisible()
     }
     

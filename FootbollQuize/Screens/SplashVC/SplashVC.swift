@@ -31,7 +31,7 @@ class SplashVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // test111
             self.actionOnDismiss?()
         }
     }

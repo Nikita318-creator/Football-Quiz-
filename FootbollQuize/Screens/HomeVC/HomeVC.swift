@@ -1,163 +1,389 @@
 import UIKit
 import SnapKit
 
+// MARK: - HomeVC
+
 class HomeVC: UIViewController {
+
+    // MARK: - Data
+    private let trainingItems: [TrainingItem] = [
+        TrainingItem(title: "Short pass training", durationMinutes: 3),
+        TrainingItem(title: "Short pass training", durationMinutes: 5),
+        TrainingItem(title: "Short pass training", durationMinutes: 7)
+    ]
     
+    private let quizData = QuizModel(
+        currentProgress: 1,
+        totalQuestions: 50,
+        continueText: "Continue quiz",
+        subContinueText: "Which part of the foot is usually used for accurate passing?"
+    )
+
     // MARK: - UI Components
     
-    // Контейнер для всех быстрых карточек
-    private let quickCardsStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 16 // Расстояние между карточками
-        stack.distribution = .fillEqually // Карточки будут иметь одинаковую высоту
-        return stack
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
+    // 1. Navigation Bar Elements (для Custom Navigation)
+    private lazy var logoButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("LOGO", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+        button.backgroundColor = .primary
+        button.setTitleColor(.white, for: .normal)
+        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 7, right: 15)
+        button.layer.cornerRadius = 13
+        button.layer.masksToBounds = true
+        return button
     }()
     
-    // MARK: - Lifecycle
+    private lazy var settingsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "settings"), for: .normal)
+        button.addTarget(self, action: #selector(didTapSettings), for: .touchUpInside)
+        return button
+    }()
     
+    private let navBarContainer = UIView() // Контейнер для LOGO и Settings
+    
+    // 2. Main Title/Subtitle
+    private let mainTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "MY TRAINING"
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .primary
+        return label
+    }()
+    
+    private let mainSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Recommended for today"
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .secondTextColor
+        return label
+    }()
+    
+    // 3. Collection View (для карточек тренировок)
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 16 // Расстояние между ячейками
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.register(TrainingCardCell.self, forCellWithReuseIdentifier: TrainingCardCell.reuseID)
+        cv.dataSource = self
+        cv.delegate = self
+        cv.showsHorizontalScrollIndicator = false
+        cv.backgroundColor = .clear
+        return cv
+    }()
+    
+    // 4. Quiz Section Title/Subtitle
+    private let quizTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "SOCCER QUIZ"
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .primary
+        return label
+    }()
+    
+    private let quizSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Learn soccer theory and history"
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .secondTextColor
+        return label
+    }()
+    
+    // 5. Quiz Card View
+    private lazy var quizCardView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground // Фон карточки
+        view.layer.cornerRadius = 16
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.08
+        view.layer.shadowOffset = CGSize(width: 0, height: 4)
+        view.layer.shadowRadius = 8
+        
+        // Добавляем Tap Gesture Recognizer
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapQuizCard))
+        view.addGestureRecognizer(tap)
+        
+        return view
+    }()
+    
+    private let progressLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Quiz progression"
+        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.textColor = .textColor
+        return label
+    }()
+    
+    private let progressValueLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .textColor
+        return label
+    }()
+    
+    private let progressBar: UIProgressView = {
+        let progress = UIProgressView(progressViewStyle: .default)
+        progress.progressTintColor = .activeColor // Цвет прогресса
+        progress.trackTintColor = .primary
+        progress.progress = 0.1 // Начальное значение
+        progress.layer.cornerRadius = 8
+        progress.layer.masksToBounds = true
+        return progress
+    }()
+    
+    private let continueLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.textColor = .textColor
+        return label
+    }()
+    
+    private let continueSubLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.textColor = .secondTextColor
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private let arrowAccessory: UIImageView = {
+        let iv = UIImageView(image: UIImage(named: "arrowRight"))
+        iv.tintColor = .secondTextColor
+        return iv
+    }()
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupQuickCards()
+        updateQuizCard(with: quizData)
     }
-    
-    // MARK: - Setup
+
+    // MARK: - Setup UI
     
     private func setupUI() {
-        // Установка заголовка
-        navigationItem.title = "Home"
-        view.backgroundColor = .systemBackground // Светлый/темный фон
+        view.backgroundColor = .backgroundMain
         
-        // Добавление Stack View на экран
-        view.addSubview(quickCardsStackView)
+        // Скрываем стандартный Navigation Bar
+        navigationController?.setNavigationBarHidden(true, animated: false)
+
+        // 1. Scroll View Setup
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
         
-        // Настройка констрейнтов через SnapKit
-        quickCardsStackView.snp.makeConstraints { make in
-            // Отступы от безопасной зоны
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
-            make.left.right.equalToSuperview().inset(20) // Горизонтальные отступы
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-    }
-    
-    private func setupQuickCards() {
-        // 1. "My Training" Card
-        let trainingCard = createCard(
-            title: "My Training",
-            subtitle: "Start your personalized session.",
-            iconName: "figure.walk",
-            action: #selector(didTapMyTraining)
-        )
         
-        // 2. "Quiz of the Day" Card
-        let quizCard = createCard(
-            title: "Quiz of the Day",
-            subtitle: "Test your football knowledge.",
-            iconName: "q.circle.fill",
-            action: #selector(didTapQuizOfTheDay)
-        )
-        
-        // 3. "Coach's Tip" Card
-        let tipCard = createCard(
-            title: "Coach's Tip",
-            subtitle: "Get a new winning strategy.",
-            iconName: "lightbulb.fill",
-            action: #selector(didTapCoachesTip)
-        )
-        
-        // Добавление карточек в Stack View
-        quickCardsStackView.addArrangedSubview(trainingCard)
-        quickCardsStackView.addArrangedSubview(quizCard)
-        quickCardsStackView.addArrangedSubview(tipCard)
-        
-        // Установка минимальной высоты для Stack View (чтобы карточки не были слишком узкими)
-        quickCardsStackView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(250)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview() // Важно для вертикального скролла
         }
-    }
-    
-    // MARK: - Card Factory (Фабрика для создания красивых карточек)
-    
-    private func createCard(title: String, subtitle: String, iconName: String, action: Selector) -> UIView {
-        let cardView = UIView()
-        cardView.backgroundColor = .secondarySystemGroupedBackground
-        cardView.layer.cornerRadius = 16
-        cardView.layer.shadowColor = UIColor.black.cgColor
-        cardView.layer.shadowOpacity = 0.08 // Легкая тень для эффекта приподнятости
-        cardView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        cardView.layer.shadowRadius = 8
         
-        // Добавление Tap Gesture Recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: action)
-        cardView.addGestureRecognizer(tapGesture)
+        // 2. Custom Navigation Bar (Logo and Settings)
+        contentView.addSubview(navBarContainer)
+        navBarContainer.addSubview(logoButton)
+        navBarContainer.addSubview(settingsButton)
         
-        // Иконка
-        let iconImageView = UIImageView()
-        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
-        iconImageView.image = UIImage(systemName: iconName, withConfiguration: config)
-        iconImageView.tintColor = .systemTeal
+        navBarContainer.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.left.right.equalToSuperview().inset(20)
+            make.height.equalTo(44) // Стандартная высота nav bar
+        }
         
-        // Заголовок
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
-        titleLabel.textColor = .label
+        logoButton.snp.makeConstraints { make in
+            make.left.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(26)
+        }
         
-        // Подзаголовок
-        let subtitleLabel = UILabel()
-        subtitleLabel.text = subtitle
-        subtitleLabel.font = .systemFont(ofSize: 15, weight: .regular)
-        subtitleLabel.textColor = .secondaryLabel
-        subtitleLabel.numberOfLines = 0
+        settingsButton.snp.makeConstraints { make in
+            make.right.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(44)
+        }
         
-        // Организация элементов внутри карточки
-        let textStack = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        // 3. Titles and Subtitles (Training)
+        contentView.addSubview(mainTitleLabel)
+        contentView.addSubview(mainSubtitleLabel)
+        
+        mainTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(navBarContainer.snp.bottom).offset(20)
+            make.left.right.equalToSuperview().inset(20)
+        }
+        
+        mainSubtitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(mainTitleLabel.snp.bottom).offset(4)
+            make.left.right.equalToSuperview().inset(20)
+        }
+        
+        // 4. Collection View (Training Cards)
+        contentView.addSubview(collectionView)
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(mainSubtitleLabel.snp.bottom).offset(20)
+            make.left.right.equalToSuperview() // Позволяет скроллить от края до края
+            make.height.equalTo(180) // Фиксированная высота для карточек
+        }
+        
+        // 5. Titles and Subtitles (Quiz)
+        contentView.addSubview(quizTitleLabel)
+        contentView.addSubview(quizSubtitleLabel)
+        
+        quizTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.bottom).offset(32)
+            make.left.right.equalToSuperview().inset(20)
+        }
+        
+        quizSubtitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(quizTitleLabel.snp.bottom).offset(4)
+            make.left.right.equalToSuperview().inset(20)
+        }
+        
+        // 6. Quiz Card View
+        contentView.addSubview(quizCardView)
+        
+        quizCardView.snp.makeConstraints { make in
+            make.top.equalTo(quizSubtitleLabel.snp.bottom).offset(20)
+            make.left.right.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().offset(-40) // Отступ снизу для скролла
+        }
+        
+        // Элементы внутри Quiz Card
+        quizCardView.addSubview(progressLabel)
+        
+        quizCardView.addSubview(progressValueLabel)
+        quizCardView.addSubview(progressBar)
+        
+        let textStack = UIStackView(arrangedSubviews: [continueLabel, continueSubLabel])
         textStack.axis = .vertical
-        textStack.spacing = 4
+        textStack.spacing = 2
         
-        cardView.addSubview(iconImageView)
-        cardView.addSubview(textStack)
+        let separator = UIView()
+        separator.backgroundColor = .backgroundMain
         
-        // Констрейнты для элементов карточки
-        iconImageView.snp.makeConstraints { make in
-            make.top.left.equalToSuperview().inset(20)
-            make.width.height.equalTo(35)
+        quizCardView.addSubview(textStack)
+        quizCardView.addSubview(separator)
+        quizCardView.addSubview(arrowAccessory)
+        
+        progressLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(progressValueLabel)
+            make.left.equalToSuperview().offset(20)
+            make.height.equalTo(20)
+        }
+        
+        progressValueLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.right.equalToSuperview().offset(-20)
+            make.height.equalTo(35)
+        }
+        
+        progressBar.snp.makeConstraints { make in
+            make.top.equalTo(progressValueLabel.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(20)
+            make.height.equalTo(15)
+        }
+        
+        separator.snp.makeConstraints { make in
+            make.top.equalTo(progressBar.snp.bottom).offset(16)
+            make.right.left.equalToSuperview()
+            make.height.equalTo(1)
         }
         
         textStack.snp.makeConstraints { make in
-            make.top.equalTo(iconImageView.snp.bottom).offset(12)
-            make.left.right.bottom.equalToSuperview().inset(20)
+            make.top.equalTo(separator.snp.bottom).offset(16)
+            make.left.equalToSuperview().offset(20)
+            make.right.equalTo(arrowAccessory.snp.left).offset(-10)
+            make.bottom.equalToSuperview().offset(-20)
         }
         
-        return cardView
+        arrowAccessory.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-20)
+            make.centerY.equalTo(textStack.snp.centerY)
+            make.width.height.equalTo(24)
+        }
     }
     
+    // MARK: - Data Update
+    
+    private func updateQuizCard(with model: QuizModel) {
+        // Установка значений прогресса
+        progressValueLabel.text = "\(model.currentProgress - 1) / \(model.totalQuestions)" // test111 тут следи что вначале 0 или 1 задано и тгда -1 не нужно?
+        
+        let progress = Float(model.currentProgress) / Float(model.totalQuestions)
+        progressBar.setProgress(progress, animated: true)
+        
+        // Установка текстов
+        continueLabel.text = model.continueText
+        continueSubLabel.text = model.subContinueText
+    }
+
     // MARK: - Actions
-    
-    @objc private func didTapMyTraining() {
-        print("Tapped: My Training")
-        // Заглушка: пушим новый контроллер
-        let nextVC = UIViewController()
-        nextVC.view.backgroundColor = .systemBackground
-        nextVC.title = "My Training Details"
-        navigationController?.pushViewController(nextVC, animated: true)
+
+    @objc private func didTapSettings() {
+        print("Tapped: Settings Button")
+//        let settingsVC = UIViewController()
+//        settingsVC.view.backgroundColor = .systemBackground
+//        settingsVC.title = "Settings"
+//        navigationController?.pushViewController(settingsVC, animated: true)
     }
     
-    @objc private func didTapQuizOfTheDay() {
-        print("Tapped: Quiz of the Day")
-        // Заглушка
-        let nextVC = UIViewController()
-        nextVC.view.backgroundColor = .systemBackground
-        nextVC.title = "Daily Quiz"
-        navigationController?.pushViewController(nextVC, animated: true)
+    @objc private func didTapQuizCard() {
+        print("Tapped: Quiz Card")
+        // Логика перехода к экрану викторины
+//        let quizVC = UIViewController()
+//        quizVC.view.backgroundColor = .systemBackground
+//        quizVC.title = "Soccer Quiz"
+//        navigationController?.pushViewController(quizVC, animated: true)
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension HomeVC: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return trainingItems.count
     }
     
-    @objc private func didTapCoachesTip() {
-        print("Tapped: Coach's Tip")
-        // Заглушка
-        let nextVC = UIViewController()
-        nextVC.view.backgroundColor = .systemBackground
-        nextVC.title = "Coach's Wisdom"
-        navigationController?.pushViewController(nextVC, animated: true)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrainingCardCell.reuseID, for: indexPath) as? TrainingCardCell else {
+            return UICollectionViewCell()
+        }
+        
+        cell.configure(with: trainingItems[indexPath.row])
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension HomeVC: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // Устанавливаем ширину ячейки. Например, 45% ширины экрана, чтобы помещалось два с небольшим.
+        let width = collectionView.frame.width * 0.45
+        let height = collectionView.frame.height
+        return CGSize(width: width, height: height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        // Отступы для коллекции
+        return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let training = trainingItems[indexPath.row]
+        print("Tapped Training Card: \(training.title)")
+        // Логика перехода к деталям тренировки
+//        let detailVC = UIViewController()
+//        detailVC.view.backgroundColor = .systemBackground
+//        detailVC.title = training.title
+//        navigationController?.pushViewController(detailVC, animated: true)
     }
 }
