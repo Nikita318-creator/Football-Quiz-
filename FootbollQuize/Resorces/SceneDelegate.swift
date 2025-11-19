@@ -37,49 +37,35 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 1. Создание экземпляров контроллеров
         let homeVC = HomeVC()
-        let quizzesVC = QuizzesVC()
         let personalTrainingVC = PersonalTrainingVC()
-        let trainingSkillsVC = TrainingSkillsVC()
-        let profileVC = ProfileVC()
+        let progressVC = ProgressVC()
         
         // 2. Оборачивание каждого контроллера в UINavigationController
         let homeNavController = UINavigationController(rootViewController: homeVC)
-        let quizzesNavController = UINavigationController(rootViewController: quizzesVC)
         let personalTrainingNavController = UINavigationController(rootViewController: personalTrainingVC)
-        let trainingSkillsNavController = UINavigationController(rootViewController: trainingSkillsVC)
-        let profileNavController = UINavigationController(rootViewController: profileVC)
-        
+        let progressNavController = UINavigationController(rootViewController: progressVC)
+
         // 3. Настройка Tab Bar Items (названия и иконки)
         
-        // HomeVC (Home)
         homeVC.title = "Home"
-        homeNavController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+        homeNavController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "homeTab"), tag: 0)
+
+        personalTrainingVC.title = "Training"
+        personalTrainingNavController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "historyTab"), tag: 1)
         
-        // QuizzesVC (Quizzes)
-        quizzesVC.title = "Quizzes"
-        quizzesNavController.tabBarItem = UITabBarItem(title: "Quizzes", image: UIImage(systemName: "q.circle"), tag: 1)
-        
-        // PersonalTrainingVC (Personal Training)
-        personalTrainingVC.title = "Personal Training"
-        personalTrainingNavController.tabBarItem = UITabBarItem(title: "Training", image: UIImage(systemName: "figure.walk"), tag: 2)
-        
-        // TrainingSkillsVC (Training Skills)
-        trainingSkillsVC.title = "Skills"
-        trainingSkillsNavController.tabBarItem = UITabBarItem(title: "Skills", image: UIImage(systemName: "flame"), tag: 3)
-        
-        // ProfileVC (Profile)
-        profileVC.title = "Profile"
-        profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person.circle"), tag: 4)
+        progressVC.title = "Progress"
+        progressNavController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "profileTab"), tag: 2)
         
         // 4. Создание UITabBarController
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [
             homeNavController,
             personalTrainingNavController,
-            trainingSkillsNavController,
-            quizzesNavController,
-            profileNavController
+            progressNavController
         ]
+        
+        tabBarController.tabBar.tintColor = .activeColor
+        tabBarController.tabBar.unselectedItemTintColor = .red
         
         return tabBarController
     }

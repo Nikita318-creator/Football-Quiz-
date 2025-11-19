@@ -134,6 +134,8 @@ class HomeVC: UIViewController {
         progress.progress = 0.1 // Начальное значение
         progress.layer.cornerRadius = 8
         progress.layer.masksToBounds = true
+        progress.layer.borderWidth = 2
+        progress.layer.borderColor = UIColor.primary.cgColor
         return progress
     }()
     
