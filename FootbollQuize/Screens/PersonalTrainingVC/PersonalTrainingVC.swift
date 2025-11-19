@@ -72,18 +72,6 @@ class PersonalTrainingVC: UIViewController {
         
         return cv
     }()
-    
-    // Кнопка "Назад" (опционально, если этот экран открывается через push)
-    private lazy var backButton: UIButton = {
-        let button = UIButton(type: .system)
-        // Используем системную стрелку или свою картинку из ассетов
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-        button.setImage(image, for: .normal)
-        button.tintColor = .white
-        button.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
-        return button
-    }()
 
     // MARK: - Lifecycle
 
@@ -124,14 +112,6 @@ class PersonalTrainingVC: UIViewController {
         headerSubtitleLabel.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-50) // Отступ от низа картинки
-        }
-        
-        // 3. Кнопка назад (поверх картинки)
-        view.addSubview(backButton)
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.left.equalToSuperview().offset(20)
-            make.width.height.equalTo(40)
         }
 
         // 4. Добавляем Collection View

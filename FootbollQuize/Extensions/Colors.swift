@@ -2,14 +2,13 @@ import UIKit
 
 extension UIColor {
     static let primary = UIColor(hex: "#0A234F")
-    static let secondary = UIColor(hex: "#196B11")
-    static let tertiary = UIColor(hex: "#CD3939")
+    static let success = UIColor(hex: "#196B11")
+    static let error = UIColor(hex: "#CD3939")
     static let textColor = UIColor(hex: "#010814")
     static let secondTextColor = UIColor(hex: "#4B686D")
     static let activeColor = UIColor(hex: "#B7DE16")
-    static let backgroundMain = UIColor(hex: "#F7F8F9")
-    
-    
+    static let backgroundMain = UIColor(hex: "#E7EAF0")
+        
     convenience init(hex: String, alpha: CGFloat = 1.0) {
         var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 

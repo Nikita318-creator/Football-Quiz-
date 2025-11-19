@@ -368,14 +368,12 @@ extension HomeVC: UICollectionViewDataSource {
 
 extension HomeVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // Устанавливаем ширину ячейки. Например, 45% ширины экрана, чтобы помещалось два с небольшим.
         let width = collectionView.frame.width * 0.45
         let height = collectionView.frame.height
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        // Отступы для коллекции
         return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     }
     
@@ -383,9 +381,9 @@ extension HomeVC: UICollectionViewDelegateFlowLayout {
         let training = trainingItems[indexPath.row]
         print("Tapped Training Card: \(training.title)")
         // Логика перехода к деталям тренировки
-//        let detailVC = UIViewController()
-//        detailVC.view.backgroundColor = .systemBackground
-//        detailVC.title = training.title
-//        navigationController?.pushViewController(detailVC, animated: true)
+
+        let soccerQuizVC = SoccerQuizVC()
+        soccerQuizVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(soccerQuizVC, animated: true)
     }
 }
