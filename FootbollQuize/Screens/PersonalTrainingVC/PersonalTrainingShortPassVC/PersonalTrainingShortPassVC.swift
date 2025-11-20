@@ -14,7 +14,6 @@ class PersonalTrainingShortPassVC: UIViewController {
     
     // MARK: - UI Components
 
-    // 1. Header Image (Та же картинка)
     private let headerImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "PersonaltrainingImage") 
@@ -29,7 +28,6 @@ class PersonalTrainingShortPassVC: UIViewController {
         return iv
     }()
     
-    // 2. Back Button (Стиль как в SoccerQuizVC)
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
@@ -102,7 +100,6 @@ class PersonalTrainingShortPassVC: UIViewController {
         return stack
     }()
 
-    // 5. Кнопка "COMPLETED" (внизу, фиксированная)
     private lazy var completedButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("COMPLETED", for: .normal)
@@ -169,7 +166,7 @@ class PersonalTrainingShortPassVC: UIViewController {
         completedButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             make.left.right.equalToSuperview().inset(20)
-            make.height.equalTo(56)
+            make.height.equalTo(64)
         }
         
         scrollView.snp.makeConstraints { make in
