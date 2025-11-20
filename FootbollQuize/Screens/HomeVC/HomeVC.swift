@@ -334,7 +334,7 @@ class HomeVC: UIViewController {
     // MARK: - Data Update
     
     private func updateQuizCard(with model: QuizModel) {
-        progressValueLabel.text = "\(model.currentProgress) / \(model.totalQuestions)"  задано и тгда -1 не нужно?
+        progressValueLabel.text = "\(model.currentProgress) / \(model.totalQuestions)"
         
         let progress = Float(model.currentProgress) / Float(model.totalQuestions)
         progressBar.setProgress(progress, animated: true)

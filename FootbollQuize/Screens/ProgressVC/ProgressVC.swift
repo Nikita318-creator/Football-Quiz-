@@ -193,22 +193,19 @@ class ProgressVC: UIViewController {
         topContainerView.addSubview(nextRankLabel)
         topContainerView.addSubview(legendBadge)
         
-        // Белая подложка сверху
         topContainerView.backgroundColor = .white
         topContainerView.layer.cornerRadius = 24
-        topContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // Закругляем только низ
         
         topContainerView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.left.right.equalToSuperview()
-            // Высота определится контентом + отступы
         }
         
         progressImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(60) // Отступ от верха экрана
+            make.top.equalToSuperview().offset(20)
             make.centerX.equalToSuperview()
-            make.height.equalTo(140) // Примерный размер картинки
-            make.width.equalTo(140)
+            make.height.equalTo(150)
+            make.width.equalTo(150)
         }
         
         rankTitleLabel.snp.makeConstraints { make in
