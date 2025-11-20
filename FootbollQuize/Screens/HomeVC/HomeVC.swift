@@ -335,7 +335,7 @@ class HomeVC: UIViewController {
     
     private func updateQuizCard(with model: QuizModel) {
         // Установка значений прогресса
-        progressValueLabel.text = "\(model.currentProgress - 1) / \(model.totalQuestions)" // test111 тут следи что вначале 0 или 1 задано и тгда -1 не нужно?
+        progressValueLabel.text = "\(model.currentProgress) / \(model.totalQuestions)" // test111 тут следи что вначале 0 или 1 задано и тгда -1 не нужно?
         
         let progress = Float(model.currentProgress) / Float(model.totalQuestions)
         progressBar.setProgress(progress, animated: true)
@@ -352,7 +352,13 @@ class HomeVC: UIViewController {
     }
     
     @objc private func didTapQuizCard() {
-        guard let soccerQuizData else { return }
+        guard let soccerQuizData else {
+            let soccerQuizVC = SoccerQuizVC(viewModel: SoccerQuizViewModel(currentModelNumber: 0))
+            soccerQuizVC.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(soccerQuizVC, animated: true)
+            return
+        }
+        
         let soccerQuizVC = SoccerQuizVC(viewModel: SoccerQuizViewModel(currentModelNumber: soccerQuizData.modelIndex))
         soccerQuizVC.currentQuestion = soccerQuizData.questionNumber
         soccerQuizVC.setProgress()
