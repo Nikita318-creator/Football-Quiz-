@@ -124,7 +124,7 @@ class ProgressVC: UIViewController {
     
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "You haven’t trained today"
+        label.text = "You haven’t trained on that day"
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .secondTextColor
         label.textAlignment = .center
@@ -177,15 +177,11 @@ class ProgressVC: UIViewController {
         customProgressBar.setProgress(progressRatio, animated: true)
         
         legendBadge.text = viewModel.model.nextRank
+        setupData()
+        
         dateCollectionView.reloadData()
         trainingCollectionView.reloadData()
-        
-        let isEmpty = trainings.isEmpty
-        emptyStateContainer.isHidden = !isEmpty
-        trainingCollectionView.isHidden = isEmpty
-        
-        trainingCollectionView.collectionViewLayout.invalidateLayout()
-        trainingCollectionView.layoutIfNeeded()
+        updateState()
     }
     
     // MARK: - Setup
@@ -194,6 +190,8 @@ class ProgressVC: UIViewController {
         let calendar = Calendar.current
         let today = Date()
         
+        calendarDates = []
+        
         for i in (0..<30).reversed() {
             if let date = calendar.date(byAdding: .day, value: -i, to: today) {
                 let isToday = i == 0
@@ -201,13 +199,9 @@ class ProgressVC: UIViewController {
             }
         }
         
-        // test111
-        trainings = [
-            TrainingSession(title: "Short pass training", duration: 5, mood: "Fine", fatigue: 3),
-            TrainingSession(title: "Short pass training", duration: 5, mood: "Good", fatigue: 2),
-            TrainingSession(title: "Long pass practice", duration: 10, mood: "Tired", fatigue: 4),
-            TrainingSession(title: "Dribbling drill", duration: 15, mood: "Fine", fatigue: 3)
-        ]
+        trainings = viewModel.progressRecords.map {
+            TrainingSession(title: "Short pass training", duration: $0.time, mood: $0.mood, fatigue: $0.stars)
+        }
     }
     
     private func setupUI() {
@@ -387,12 +381,9 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             dateCollectionView.reloadData()
             
             if indexPath.item == calendarDates.count - 1 {
-                trainings = [
-                    TrainingSession(title: "Short pass training", duration: 5, mood: "Fine", fatigue: 3),
-                    TrainingSession(title: "Short pass training", duration: 5, mood: "Good", fatigue: 2),
-                    TrainingSession(title: "Long pass practice", duration: 10, mood: "Tired", fatigue: 4),
-                    TrainingSession(title: "Dribbling drill", duration: 15, mood: "Fine", fatigue: 3)
-                ]
+                trainings = viewModel.progressRecords.map {
+                    TrainingSession(title: "Short pass training", duration: $0.time, mood: $0.mood, fatigue: $0.stars)
+                }
             } else {
                 trainings = []
             }

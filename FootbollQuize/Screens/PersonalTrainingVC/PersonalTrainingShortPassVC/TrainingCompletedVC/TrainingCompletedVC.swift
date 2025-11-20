@@ -5,7 +5,7 @@ class TrainingCompletedVC: UIViewController {
     
     // MARK: - Data Types
     enum MoodType {
-        case bad, neutral, good
+        case bad, neutral, fine
     }
     
     enum Step {
@@ -17,19 +17,20 @@ class TrainingCompletedVC: UIViewController {
     
     // MARK: - Callbacks
     var onDone: (() -> Void)?
-    var onRecordFinished: ((Int, Int, MoodType?) -> Void)?
     
     // MARK: - State
     private let trainingTitle: String
     private var currentStep: Step = .initial
     
     private var trainedMinutes: Int = 5
-    private var tirednessRating: Int = 0
-    private var selectedMood: MoodType? = nil
+    private var tirednessRating: Int = 3
+    private var selectedMood: MoodType = .neutral
     
     private var starButtons: [UIButton] = []
     private var moodButtons: [UIButton] = []
     
+    private let progressService = ProgressService()
+
     // MARK: - UI Components
     private let containerView: UIView = {
         let view = UIView()
@@ -270,7 +271,7 @@ class TrainingCompletedVC: UIViewController {
         moodStack.spacing = 20
         
         moodButtons = []
-        let moods: [MoodType] = [.bad, .neutral, .good]
+        let moods: [MoodType] = [.bad, .neutral, .fine]
         
         for (index, _) in moods.enumerated() {
             let btn = UIButton()
@@ -335,8 +336,10 @@ class TrainingCompletedVC: UIViewController {
     }
     
     @objc private func didTapDoneFinal() {
-        onRecordFinished?(trainedMinutes, tirednessRating, selectedMood)
-        // test111 - сохраняем модельки для прогресс вью тут
+        progressService.saveProgress(
+            ProgressServiceData(time: trainedMinutes, stars: tirednessRating, mood: "\(selectedMood)")
+        )
+        
         onDone?()
         dismiss(animated: true)
     }
@@ -371,7 +374,7 @@ class TrainingCompletedVC: UIViewController {
     }
     
     @objc private func moodTapped(_ sender: UIButton) {
-        let moods: [MoodType] = [.bad, .neutral, .good]
+        let moods: [MoodType] = [.bad, .neutral, .fine]
         selectedMood = moods[sender.tag]
         
         for (index, btn) in moodButtons.enumerated() {

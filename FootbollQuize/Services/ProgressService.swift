@@ -1,32 +1,62 @@
-import UIKit
+import Foundation
 
-struct ProgressServiceData {
-    let modelIndex: Int
-    let question: String
-    let questionNumber: Int
+struct ProgressServiceData: Codable {
+    let time: Int
+    let stars: Int
+    let mood: String
 }
 
 class ProgressService {
     
-    // Ключи для UserDefaults
     private let quizeCompletedKey = "quizeCompleted"
     private let trainingCompletedKey = "trainingCompleted"
+    private let progressRecordsKey = "progressRecords"
         
-//    func saveTest(_ data: ProgressServiceData) {
-//        UserDefaults.standard.set(data.modelIndex, forKey: "last_soccer_quiz_model_index")
-//        UserDefaults.standard.set(data.question, forKey: "last_soccer_quiz_question")
-//        UserDefaults.standard.set(data.questionNumber, forKey: "last_soccer_quiz_question_number")
-//    }
-//    
-//    func getTest() -> ProgressServiceData? {
-//        guard
-//            let modelIndex = UserDefaults.standard.value(forKey: "last_soccer_quiz_model_index") as? Int,
-//            let question = UserDefaults.standard.value(forKey: "last_soccer_quiz_question") as? String,
-//            let questionNumber = UserDefaults.standard.value(forKey: "last_soccer_quiz_question_number") as? Int
-//        else { return nil }
-//
-//        return ProgressServiceData(modelIndex: modelIndex, question: question, questionNumber: questionNumber)
-//    }
+    func saveProgress(_ data: ProgressServiceData) {
+        let userDefaults = UserDefaults.standard
+        let decoder = JSONDecoder()
+        let encoder = JSONEncoder()
+        
+        var allRecords: [ProgressServiceData] = []
+        
+        if let savedData = userDefaults.data(forKey: progressRecordsKey) {
+            do {
+                allRecords = try decoder.decode([ProgressServiceData].self, from: savedData)
+            } catch {
+                print("\(error)")
+            }
+        }
+        
+        allRecords.append(data)
+        
+        do {
+            let encodedData = try encoder.encode(allRecords)
+            userDefaults.set(encodedData, forKey: progressRecordsKey)
+        } catch {
+            print("\(error)")
+        }
+    }
+    
+    func getProgressRecords() -> [ProgressServiceData] {
+        let userDefaults = UserDefaults.standard
+        let decoder = JSONDecoder()
+        
+        guard let savedData = userDefaults.data(forKey: progressRecordsKey) else {
+            return []
+        }
+        
+        do {
+            let allRecords = try decoder.decode([ProgressServiceData].self, from: savedData)
+            return allRecords
+        } catch {
+            print("\(error)")
+            return []
+        }
+    }
+    
+    func clearAllProgress() {
+        UserDefaults.standard.removeObject(forKey: progressRecordsKey)
+    }
     
     func getQuizeCompleted() -> [Int] {
         return UserDefaults.standard.array(forKey: quizeCompletedKey) as? [Int] ?? []

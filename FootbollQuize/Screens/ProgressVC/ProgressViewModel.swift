@@ -26,13 +26,16 @@ class ProgressViewModel {
 
     var currentIndex: Int = 0
     var model: ProgressDataModel
-        
+    var progressRecords: [ProgressServiceData] = []
+
     init() {
         model = progressDataModels[currentIndex] // for init in's necessary
         updateState()
     }
     
     func updateState() {
+        progressRecords = progressService.getProgressRecords()
+
         let quizesCompleted = progressService.getQuizeCompleted().count
         let trainingsCompleted = progressService.getTrainingCompleted().count
              
