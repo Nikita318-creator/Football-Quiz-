@@ -30,6 +30,46 @@ class SoccerQuizViewModel {
         }
     }
     
+    // uncomment for test
+//    let model3min: [SoccerQuizModel] = [
+//        SoccerQuizModel(
+//            question: "How many players start on the field in a football team?",
+//            options: ["9", "10", "11", "12"],
+//            correctOption: 2
+//        ),
+//        SoccerQuizModel(
+//            question: "What is the kick taken from the corner of the field called?",
+//            options: ["Strong kick", "Corner kick", "Short pass", "Dummy move"],
+//            correctOption: 1
+//        )
+//    ]
+//    
+//    let model5min: [SoccerQuizModel] = [
+//        SoccerQuizModel(
+//            question: "How many players start on the field in a football team?",
+//            options: ["9", "10", "11", "12"],
+//            correctOption: 2
+//        ),
+//        SoccerQuizModel(
+//            question: "What is the kick taken from the corner of the field called?",
+//            options: ["Strong kick", "Corner kick", "Short pass", "Dummy move"],
+//            correctOption: 1
+//        )
+//    ].reversed()
+//    
+//    let model7min: [SoccerQuizModel] = [
+//        SoccerQuizModel(
+//            question: "What is a forward pass that breaks the defense line called?",
+//            options: ["Short pass", "Back pass", "Through ball", "Side pass"],
+//            correctOption: 2
+//        ),
+//        SoccerQuizModel(
+//            question: "Which body part may NOT be used to score a goal?",
+//            options: ["Head", "Chest", "Foot", "Hand (except goalkeeper)"],
+//            correctOption: 3
+//        )
+//    ]
+    
     let model3min: [SoccerQuizModel] = [
         SoccerQuizModel(
             question: "How many players start on the field in a football team?",

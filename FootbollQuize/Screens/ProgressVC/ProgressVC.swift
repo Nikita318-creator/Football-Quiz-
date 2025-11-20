@@ -6,6 +6,7 @@ class ProgressVC: UIViewController {
     // MARK: - Data
     private var calendarDates: [CalendarDate] = []
     private var trainings: [TrainingSession] = []
+    private let viewModel = ProgressViewModel()
     
     // MARK: - UI Components
     
@@ -20,24 +21,24 @@ class ProgressVC: UIViewController {
         return view
     }()
     
-    private let progressImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "progressImage1"))
+    private lazy var progressImageView: UIImageView = {
+        let iv = UIImageView(image: UIImage(named: viewModel.model.imageName))
         iv.contentMode = .scaleAspectFit
         return iv
     }()
     
-    private let rankTitleLabel: UILabel = {
+    private lazy var rankTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "CAPTAIN"
+        label.text = viewModel.model.title
         label.font = .systemFont(ofSize: 28, weight: .heavy)
         label.textColor = .primary
         label.textAlignment = .center
         return label
     }()
     
-    private let rankSubtitleLabel: UILabel = {
+    private lazy var rankSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Complete 50 trainings"
+        label.text = viewModel.model.subtitle
         label.font = .systemFont(ofSize: 15, weight: .regular)
         label.textColor = .secondTextColor
         label.textAlignment = .center
@@ -51,22 +52,24 @@ class ProgressVC: UIViewController {
         return view
     }()
     
-    private let scoreLabel: UILabel = {
+    private lazy var scoreLabel: UILabel = {
         let label = UILabel()
-        label.text = "30 / 50"
+        label.text = "\(viewModel.model.currentProgress) / \(viewModel.model.fullProgress)"
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.textColor = .primary
         return label
     }()
     
     private let customProgressBar: UIProgressView = {
-        let pv = UIProgressView(progressViewStyle: .bar)
-        pv.trackTintColor = .backgroundMain
-        pv.progressTintColor = .activeColor
-        pv.layer.cornerRadius = 8
-        pv.clipsToBounds = true
-        pv.progress = 0.6
-        return pv
+        let progress = UIProgressView(progressViewStyle: .bar)
+        progress.progressTintColor = .activeColor
+        progress.trackTintColor = .primary
+        progress.progress = 0.1 
+        progress.layer.cornerRadius = 8
+        progress.layer.masksToBounds = true
+        progress.layer.borderWidth = 2
+        progress.layer.borderColor = UIColor.primary.cgColor
+        return progress
     }()
     
     private let nextRankLabel: UILabel = {
@@ -77,17 +80,14 @@ class ProgressVC: UIViewController {
         return label
     }()
     
-    private let legendBadge: UILabel = {
+    private lazy var legendBadge: UILabel = {
         let label = UILabel()
-        label.text = "Legend"
-        label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .white // Или .primary в зависимости от точности
-        label.backgroundColor = UIColor(hex: "#D4AF37") // Золотой цвет (или используй .activeColor если строго по палитре)
-        // Если строго по палитре:
-        // label.backgroundColor = .activeColor
-        // label.textColor = .primary
+        label.text = viewModel.model.nextRank
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .white
+        label.backgroundColor = UIColor(hex: "#D4AF37")
         label.textAlignment = .center
-        label.layer.cornerRadius = 10
+        label.layer.cornerRadius = 11
         label.layer.masksToBounds = true
         return label
     }()
@@ -152,12 +152,40 @@ class ProgressVC: UIViewController {
         super.viewDidLoad()
         setupData()
         setupUI()
-        updateState() // Проверяем состояние при загрузке
+        updateState()
         
         DispatchQueue.main.async {
             let lastIndexPath = IndexPath(item: self.calendarDates.count - 1, section: 0)
             self.dateCollectionView.scrollToItem(at: lastIndexPath, at: .centeredHorizontally, animated: false)
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.updateState()
+        
+        rankTitleLabel.text = viewModel.model.title
+        rankSubtitleLabel.text = viewModel.model.subtitle
+        progressImageView.image = UIImage(named: viewModel.model.imageName)
+        
+        let current = viewModel.model.currentProgress
+        let full = viewModel.model.fullProgress
+        scoreLabel.text = "\(current) / \(full)"
+        
+        let progressRatio = full > 0 ? Float(current) / Float(full) : 0.0
+        customProgressBar.setProgress(progressRatio, animated: true)
+        
+        legendBadge.text = viewModel.model.nextRank
+        dateCollectionView.reloadData()
+        trainingCollectionView.reloadData()
+        
+        let isEmpty = trainings.isEmpty
+        emptyStateContainer.isHidden = !isEmpty
+        trainingCollectionView.isHidden = isEmpty
+        
+        trainingCollectionView.collectionViewLayout.invalidateLayout()
+        trainingCollectionView.layoutIfNeeded()
     }
     
     // MARK: - Setup
@@ -173,7 +201,7 @@ class ProgressVC: UIViewController {
             }
         }
         
-        // Изначально заполняем данными
+        // test111
         trainings = [
             TrainingSession(title: "Short pass training", duration: 5, mood: "Fine", fatigue: 3),
             TrainingSession(title: "Short pass training", duration: 5, mood: "Good", fatigue: 2),
@@ -196,7 +224,6 @@ class ProgressVC: UIViewController {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
-            // Важно: make.height не фиксируем, он растянется контентом
         }
         
         // --- Top Section Layout ---
@@ -212,7 +239,7 @@ class ProgressVC: UIViewController {
         
         topContainerView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.left.right.equalToSuperview()
+            make.left.right.equalToSuperview().inset(10)
         }
         
         progressImageView.snp.makeConstraints { make in
@@ -257,7 +284,7 @@ class ProgressVC: UIViewController {
         legendBadge.snp.makeConstraints { make in
             make.centerY.equalTo(nextRankLabel)
             make.right.equalTo(customProgressBar)
-            make.width.equalTo(70)
+            make.width.equalTo(80)
             make.height.equalTo(22)
         }
         
@@ -305,16 +332,13 @@ class ProgressVC: UIViewController {
     
     private func updateState() {
         if trainings.isEmpty {
-            // Показываем Empty State
             trainingCollectionView.isHidden = true
             emptyStateContainer.isHidden = false
             
-            // Сбрасываем констрейнт высоты коллекции, чтобы скролл работал корректно
             trainingCollectionView.snp.updateConstraints { make in
                 make.height.equalTo(0)
             }
         } else {
-            // Показываем список
             trainingCollectionView.isHidden = false
             emptyStateContainer.isHidden = true
             updateTrainingsHeight()
@@ -323,7 +347,7 @@ class ProgressVC: UIViewController {
     
     private func updateTrainingsHeight() {
         guard !trainings.isEmpty else { return }
-        let height = CGFloat(trainings.count) * 122.0 // Высота ячейки + отступ
+        let height = CGFloat(trainings.count) * 122.0
         trainingCollectionView.snp.updateConstraints { make in
             make.height.equalTo(height)
         }
@@ -356,16 +380,12 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == dateCollectionView {
-            // 1. Update Selection UI
             for i in 0..<calendarDates.count {
                 calendarDates[i].isSelected = false
             }
             calendarDates[indexPath.item].isSelected = true
             dateCollectionView.reloadData()
             
-            // 2. MOCK LOGIC FOR TESTING EMPTY STATE
-            // Если выбрали последний элемент (сегодня) - показываем данные
-            // Если любой другой день - показываем пустой экран
             if indexPath.item == calendarDates.count - 1 {
                 trainings = [
                     TrainingSession(title: "Short pass training", duration: 5, mood: "Fine", fatigue: 3),
@@ -374,16 +394,14 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
                     TrainingSession(title: "Dribbling drill", duration: 15, mood: "Fine", fatigue: 3)
                 ]
             } else {
-                trainings = [] // Очищаем для теста
+                trainings = []
             }
             
-            // 3. Update UI Logic
             trainingCollectionView.reloadData()
             updateState()
         }
     }
     
-    // Size settings
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == dateCollectionView {
             return CGSize(width: 50, height: 70)
@@ -393,7 +411,6 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         }
     }
     
-    // Insets
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if collectionView == dateCollectionView {
             return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)

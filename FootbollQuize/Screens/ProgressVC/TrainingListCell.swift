@@ -1,18 +1,6 @@
 import UIKit
 import SnapKit
 
-struct CalendarDate {
-    let date: Date
-    var isSelected: Bool
-}
-
-struct TrainingSession {
-    let title: String
-    let duration: Int
-    let mood: String
-    let fatigue: Int
-}
-
 class TrainingListCell: UICollectionViewCell {
     static let reuseID = "TrainingListCell"
     
@@ -28,9 +16,8 @@ class TrainingListCell: UICollectionViewCell {
         return view
     }()
     
-    // Top row: Icon + Time
     private let clockIcon: UIImageView = {
-        let iv = UIImageView(image: UIImage(systemName: "clock.fill")) // Используем system временно
+        let iv = UIImageView(image: UIImage(systemName: "clock.fill"))
         iv.tintColor = .secondTextColor
         iv.contentMode = .scaleAspectFit
         return iv
@@ -43,7 +30,6 @@ class TrainingListCell: UICollectionViewCell {
         return label
     }()
     
-    // Title
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .semibold)
@@ -51,7 +37,6 @@ class TrainingListCell: UICollectionViewCell {
         return label
     }()
     
-    // Badges Stack
     private let badgesStack: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal

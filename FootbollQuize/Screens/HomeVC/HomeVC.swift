@@ -132,9 +132,9 @@ class HomeVC: UIViewController {
     
     private let progressBar: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .default)
-        progress.progressTintColor = .activeColor // Цвет прогресса
+        progress.progressTintColor = .activeColor 
         progress.trackTintColor = .primary
-        progress.progress = 0.1 // Начальное значение
+        progress.progress = 0.1
         progress.layer.cornerRadius = 8
         progress.layer.masksToBounds = true
         progress.layer.borderWidth = 2
@@ -346,7 +346,7 @@ class HomeVC: UIViewController {
     // MARK: - Actions
 
     @objc private func didTapSettings() {
-        print("Tapped: Settings Button")
+        // test111
     }
     
     @objc private func didTapQuizCard() {

@@ -7,7 +7,8 @@ class PersonalTrainingShortPassVC: UIViewController {
 
     var currentIndex: Int = 0
     private let viewModel = PersonalTrainingShortPassViewModel()
-    
+    private let progressService = ProgressService()
+
     private var stepsData: [String] {
         viewModel.model[currentIndex].steps
     }
@@ -37,7 +38,6 @@ class PersonalTrainingShortPassVC: UIViewController {
         button.backgroundColor = .white
         button.layer.cornerRadius = 22
         
-        // Тень кнопки
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.1
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -47,10 +47,9 @@ class PersonalTrainingShortPassVC: UIViewController {
         return button
     }()
 
-    // 3. Header Labels (С исправленными тенями)
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "SHORT PASS\nTRAINING" // Перенос строки как на макете
+        label.text = "SHORT PASS\nTRAINING"
         label.numberOfLines = 2
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = .white
@@ -91,11 +90,10 @@ class PersonalTrainingShortPassVC: UIViewController {
         return sv
     }()
     
-    // Контейнер внутри скролла (StackView)
     private let contentStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 12 // Отступ между карточками
+        stack.spacing = 12
         stack.distribution = .fill
         return stack
     }()
@@ -199,6 +197,7 @@ class PersonalTrainingShortPassVC: UIViewController {
         let popup = TrainingCompletedVC(trainingTitle: "Short Pass Training")
         
         popup.onDone = { [weak self] in
+            self?.progressService.saveTrainingCompleted(id: self?.currentIndex ?? 0)
             self?.navigationController?.popViewController(animated: true)
         }
         

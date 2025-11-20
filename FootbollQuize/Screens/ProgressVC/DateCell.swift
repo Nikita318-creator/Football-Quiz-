@@ -6,7 +6,7 @@ class DateCell: UICollectionViewCell {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 25 // Половина от размера (50x50)
+        view.layer.cornerRadius = 25
         view.layer.masksToBounds = true
         return view
     }()
@@ -43,25 +43,23 @@ class DateCell: UICollectionViewCell {
             make.width.height.equalTo(50)
         }
         
-        dayLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        monthLabel.snp.makeConstraints { make in
+            make.top.equalTo(dayLabel.snp.bottom).offset(-2)
+            make.centerX.equalToSuperview()
         }
         
-        monthLabel.snp.makeConstraints { make in
-            make.top.equalTo(containerView.snp.bottom).offset(4)
+        dayLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-5)
         }
     }
     
     func configure(with model: CalendarDate) {
         let formatter = DateFormatter()
         
-        // Day
         formatter.dateFormat = "d"
         dayLabel.text = formatter.string(from: model.date)
         
-        // Month
         formatter.dateFormat = "MMM"
         monthLabel.text = formatter.string(from: model.date).uppercased()
         
@@ -69,40 +67,16 @@ class DateCell: UICollectionViewCell {
             containerView.backgroundColor = .primary
             dayLabel.textColor = .activeColor
             monthLabel.textColor = .primary
-            monthLabel.isHidden = true // На скрине у выбранного элемента нет месяца снизу, он внутри круга?
-            // Впрочем, на скрине "12 SEP" - SEP внутри круга. Давай поправим layout под скрин.
+            monthLabel.isHidden = true
+            monthLabel.isHidden = false
+            monthLabel.textColor = .primary
             
-            // Re-layout for selected state (Day centered, Month below inside circle)
-             // Упростим: меняем цвета
-             monthLabel.isHidden = false
-             monthLabel.textColor = .primary // Текст месяца под кругом не виден или меняет цвет?
-             // На скрине у неактивных: Число (серый), Месяц (серый) снизу.
-             // У активного: Синий круг, Желтое число, Месяц внутри? На скрине "12 SEP" внутри синего круга.
-             
-             // Модификация под скрин:
-             monthLabel.snp.remakeConstraints { make in
-                 make.top.equalTo(dayLabel.snp.bottom).offset(-2)
-                 make.centerX.equalToSuperview()
-             }
-             monthLabel.textColor = .activeColor
-             monthLabel.font = .systemFont(ofSize: 8, weight: .bold)
-             dayLabel.snp.remakeConstraints { make in
-                 make.centerX.equalToSuperview()
-                 make.centerY.equalToSuperview().offset(-5)
-             }
-             
+            monthLabel.textColor = .activeColor
+            monthLabel.font = .systemFont(ofSize: 8, weight: .bold)
         } else {
             containerView.backgroundColor = .clear
             dayLabel.textColor = .secondTextColor
             
-            // Reset Layout
-            monthLabel.snp.remakeConstraints { make in
-                make.top.equalTo(containerView.snp.bottom).offset(4)
-                make.centerX.equalToSuperview()
-            }
-            dayLabel.snp.remakeConstraints { make in
-                 make.center.equalToSuperview()
-            }
             monthLabel.textColor = .secondTextColor
             monthLabel.font = .systemFont(ofSize: 10, weight: .medium)
         }

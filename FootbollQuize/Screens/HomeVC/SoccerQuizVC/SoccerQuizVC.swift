@@ -10,7 +10,8 @@ class SoccerQuizVC: UIViewController {
     
     private var currentSelectedOption = 1
     private let soccerQuizService = SoccerQuizService()
-    
+    private let progressService = ProgressService()
+
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
@@ -87,6 +88,7 @@ class SoccerQuizVC: UIViewController {
             if isCorrect {
                 currentQuestion += 1
                 guard currentQuestion < viewModel.model.count else {
+                    progressService.saveQuizeCompleted(id: viewModel.currentModelNumber)
                     navigationController?.popViewController(animated: true)
                     return
                 }

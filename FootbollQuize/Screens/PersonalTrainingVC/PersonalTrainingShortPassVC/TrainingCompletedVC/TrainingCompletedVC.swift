@@ -9,22 +9,20 @@ class TrainingCompletedVC: UIViewController {
     }
     
     enum Step {
-        case initial        // Экран с галочкой
-        case duration       // Сколько тренировался
-        case tiredness      // Звезды
-        case mood           // Смайлы
+        case initial
+        case duration
+        case tiredness
+        case mood
     }
     
     // MARK: - Callbacks
     var onDone: (() -> Void)?
-    // Передает (Минуты, Рейтинг усталости 1-5, Настроение)
     var onRecordFinished: ((Int, Int, MoodType?) -> Void)?
     
     // MARK: - State
     private let trainingTitle: String
     private var currentStep: Step = .initial
     
-    // Данные пользователя
     private var trainedMinutes: Int = 5
     private var tirednessRating: Int = 0
     private var selectedMood: MoodType? = nil
@@ -41,11 +39,10 @@ class TrainingCompletedVC: UIViewController {
         return view
     }()
     
-    // Лейбл времени храним, чтобы обновлять текст
     private lazy var durationLabel: UILabel = {
         let label = UILabel()
         label.text = "\(trainedMinutes)\nmin"
-        label.font = .systemFont(ofSize: 28, weight: .heavy) // Жирный шрифт цифры
+        label.font = .systemFont(ofSize: 28, weight: .heavy)
         label.textColor = .primary
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -70,24 +67,20 @@ class TrainingCompletedVC: UIViewController {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         
         setupContainerLayout()
-        updateUI() // Отрисовка первого состояния
+        updateUI()
     }
     
     // MARK: - Layout
     private func setupContainerLayout() {
         view.addSubview(containerView)
         
-        // ВЕРНУЛ ОТСТУПЫ 10
         containerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().inset(10) // Отступ снизу 10, а не прилипание к safeArea
-            // Высота определяется контентом внутри
+            make.bottom.equalToSuperview().inset(10)
         }
     }
     
-    // Главный метод перерисовки
     private func updateUI() {
-        // Очищаем старое
         containerView.subviews.forEach { $0.removeFromSuperview() }
         
         switch currentStep {
@@ -104,16 +97,14 @@ class TrainingCompletedVC: UIViewController {
     
     // MARK: - 1. Initial View
     private func setupInitialView() {
-        // Фон иконки
         let iconContainer = UIView()
         iconContainer.backgroundColor = UIColor.activeColor.withAlphaComponent(0.4)
         iconContainer.layer.cornerRadius = 50
         
-        // ВЕРНУЛ ВАШУ ИКОНКУ
         let iconImageView = UIImageView()
         iconImageView.image = UIImage(named: "tick-circle")
         iconImageView.contentMode = .center
-        iconImageView.tintColor = .primary // Если иконка шаблонная (template), иначе уберите эту строку
+        iconImageView.tintColor = .primary
         
         let titleLabel = UILabel()
         titleLabel.text = "TRAINING\nCOMPLETE"
@@ -135,7 +126,6 @@ class TrainingCompletedVC: UIViewController {
         let doneButton = createButton(title: "DONE", bgColor: .primary, titleColor: .activeColor)
         doneButton.addTarget(self, action: #selector(didTapDoneFinal), for: .touchUpInside)
         
-        // Добавляем
         containerView.addSubview(iconContainer)
         iconContainer.addSubview(iconImageView)
         containerView.addSubview(titleLabel)
@@ -143,7 +133,6 @@ class TrainingCompletedVC: UIViewController {
         containerView.addSubview(recordButton)
         containerView.addSubview(doneButton)
         
-        // Констрейнты
         iconContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(32)
             make.centerX.equalToSuperview()
@@ -233,18 +222,16 @@ class TrainingCompletedVC: UIViewController {
         starButtons = []
         for i in 1...5 {
             let btn = UIButton()
-            // Используем системную звезду, так как название вашей звезды не указано,
-            // но красим её в activeColor. Замените на UIImage(named: "star") при наличии.
             let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .medium)
             btn.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
             btn.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
-            btn.tintColor = .backgroundMain // Цвет неактивной звезды
+            btn.tintColor = .backgroundMain
             btn.tag = i
             btn.addTarget(self, action: #selector(starTapped(_:)), for: .touchUpInside)
             starStack.addArrangedSubview(btn)
             starButtons.append(btn)
         }
-        updateStarAppearance() // Покрасить если уже выбрано
+        updateStarAppearance()
         
         let nextBtn = createButton(title: "NEXT", bgColor: .primary, titleColor: .activeColor)
         nextBtn.addTarget(self, action: #selector(goToMood), for: .touchUpInside)
@@ -348,8 +335,8 @@ class TrainingCompletedVC: UIViewController {
     }
     
     @objc private func didTapDoneFinal() {
-        // Возвращаем данные и закрываем
         onRecordFinished?(trainedMinutes, tirednessRating, selectedMood)
+        // test111 - сохраняем модельки для прогресс вью тут
         onDone?()
         dismiss(animated: true)
     }
@@ -375,10 +362,10 @@ class TrainingCompletedVC: UIViewController {
         for btn in starButtons {
             if btn.tag <= tirednessRating {
                 btn.isSelected = true
-                btn.tintColor = .activeColor // Ваши лаймовые звезды
+                btn.tintColor = .activeColor
             } else {
                 btn.isSelected = false
-                btn.tintColor = .backgroundMain // Серые звезды
+                btn.tintColor = .backgroundMain
             }
         }
     }
@@ -406,7 +393,7 @@ class TrainingCompletedVC: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.backgroundColor = bgColor
         button.setTitleColor(titleColor, for: .normal)
-        button.layer.cornerRadius = 32 // Высота кнопки 64, значит радиус 32
+        button.layer.cornerRadius = 32
         return button
     }
     
