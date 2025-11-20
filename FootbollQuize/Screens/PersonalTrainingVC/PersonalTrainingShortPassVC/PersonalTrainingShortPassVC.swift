@@ -4,15 +4,14 @@ import SnapKit
 class PersonalTrainingShortPassVC: UIViewController {
 
     // MARK: - Data
-    // Данные для шагов (на английском)
-    private let stepsData: [String] = [
-        "Stand straight, feet shoulder-width apart. Keep your gaze forward and relax your shoulders.",
-        "Place the ball in front of you at a comfortable distance. Prepare to make a pass.",
-        "Approach the ball slightly, planting your non-kicking foot next to the ball.",
-        "Swing your kicking leg and strike the center of the ball with the inside of your foot for accuracy.",
-        "Follow through with your kicking leg towards the target to ensure the ball travels straight."
-    ]
 
+    var currentIndex: Int = 0
+    private let viewModel = PersonalTrainingShortPassViewModel()
+    
+    private var stepsData: [String] {
+        viewModel.model[currentIndex].steps
+    }
+    
     // MARK: - UI Components
 
     // 1. Header Image (Та же картинка)
@@ -65,12 +64,13 @@ class PersonalTrainingShortPassVC: UIViewController {
         label.layer.shadowOffset = CGSize(width: 0, height: 2)
         label.layer.masksToBounds = false
         
+        label.isHidden = true // test111
+        
         return label
     }()
 
     private let headerSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "3 minutes"
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.textColor = .white
         
@@ -130,6 +130,8 @@ class PersonalTrainingShortPassVC: UIViewController {
     // MARK: - Setup UI
 
     private func setupUI() {
+        headerSubtitleLabel.text = viewModel.model[currentIndex].title
+        
         view.backgroundColor = .backgroundMain
         
         view.addSubview(headerImageView)

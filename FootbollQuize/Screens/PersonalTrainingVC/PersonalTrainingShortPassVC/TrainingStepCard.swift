@@ -63,13 +63,15 @@ class TrainingStepCard: UIView {
             make.top.equalToSuperview().offset(16)
             make.left.equalToSuperview().offset(16)
             make.width.height.equalTo(40)
+            make.bottom.lessThanOrEqualToSuperview().offset(-16)
         }
         
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
             make.left.equalTo(numberLabel.snp.right).offset(16)
             make.right.equalToSuperview().offset(-16)
-            make.bottom.equalToSuperview().offset(-16)
+            make.bottom.equalToSuperview().offset(-16).priority(.medium)
+            make.bottom.lessThanOrEqualToSuperview().offset(-16)
         }
     }
 }

@@ -4,15 +4,16 @@ import SnapKit
 class PersonalTrainingVC: UIViewController {
 
     // MARK: - Data
-    // Используем ту же структуру данных, что и на прошлом экране
-    private let trainingItems: [TrainingItem] = [
-        TrainingItem(title: "Short pass training", durationMinutes: 3),
-        TrainingItem(title: "Short pass training", durationMinutes: 5),
-        TrainingItem(title: "Short pass training", durationMinutes: 4),
-        TrainingItem(title: "Short pass training", durationMinutes: 12),
-        TrainingItem(title: "Short pass training", durationMinutes: 8),
-        TrainingItem(title: "Short pass training", durationMinutes: 10)
-    ]
+    private let trainingItems: [TrainingItem] = {
+        var items: [TrainingItem] = []
+        for _ in 0..<50 {
+            let randomDuration = Int.random(in: 3...12)
+            let item = TrainingItem(title: "Short pass training", durationMinutes: randomDuration)
+            items.append(item)
+        }
+        return items
+    }()
+
 
     // MARK: - UI Components
 
@@ -180,6 +181,7 @@ extension PersonalTrainingVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let personalTrainingShortPassVC = PersonalTrainingShortPassVC()
         personalTrainingShortPassVC.hidesBottomBarWhenPushed = true
+        personalTrainingShortPassVC.currentIndex = indexPath.row
         navigationController?.pushViewController(personalTrainingShortPassVC, animated: true)
     }
 }
