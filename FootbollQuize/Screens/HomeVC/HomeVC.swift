@@ -30,13 +30,9 @@ class HomeVC: UIViewController {
     // 1. Navigation Bar Elements (для Custom Navigation)
     private lazy var logoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("LOGO", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
-        button.backgroundColor = .primary
-        button.setTitleColor(.white, for: .normal)
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 7, right: 15)
-        button.layer.cornerRadius = 13
-        button.layer.masksToBounds = true
+        if let image = UIImage(named: "LOGO") {
+            button.setImage(image, for: .normal)
+        }
         return button
     }()
     
@@ -219,9 +215,7 @@ class HomeVC: UIViewController {
         }
         
         logoButton.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.height.equalTo(26)
+            make.centerY.left.equalToSuperview()
         }
         
         settingsButton.snp.makeConstraints { make in

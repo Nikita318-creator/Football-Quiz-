@@ -8,7 +8,7 @@ class SplashVC: UIViewController {
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .bold)
-        imageView.image = UIImage(systemName: "sportscourt.fill", withConfiguration: config)
+//        imageView.image = UIImage(systemName: "sportscourt.fill", withConfiguration: config) // test111
         imageView.tintColor = .white
         return imageView
     }()
