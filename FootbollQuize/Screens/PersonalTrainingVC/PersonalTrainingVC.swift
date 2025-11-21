@@ -14,71 +14,56 @@ class PersonalTrainingVC: UIViewController {
         return items
     }()
 
-
     // MARK: - UI Components
+    
+    private let gradientLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        let startColor = UIColor(red: 0x0A/255.0, green: 0x23/255.0, blue: 0x4F/255.0, alpha: 0.0).cgColor
+        let endColor = UIColor(red: 0x0A/255.0, green: 0x23/255.0, blue: 0x4F/255.0, alpha: 1.0).cgColor
+        
+        layer.colors = [startColor, endColor]
+        layer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        layer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        return layer
+    }()
 
-    // 1. Header Image View
     private let headerImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "PersonaltrainingImage")
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        let overlay = UIView()
-        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        iv.addSubview(overlay)
-        overlay.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         return iv
     }()
 
-    // 2. Header Labels
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "TRAINING"
         label.font = .main(ofSize: 32)
         label.textColor = .white
-        
-        label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowOpacity = 1.0
-        label.layer.shadowRadius = 4
-        label.layer.shadowOffset = CGSize(width: 0, height: 2)
-        label.layer.masksToBounds = false
-        
         return label
     }()
 
     private let headerSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "New exercises!"
-        label.font = .second(ofSize: 17)
+        label.font = .second(ofSize: 16)
         label.textColor = .white
-        
-        label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowOpacity = 1.0
-        label.layer.shadowRadius = 4
-        label.layer.shadowOffset = CGSize(width: 0, height: 2)
-        label.layer.masksToBounds = false
-        
         return label
     }()
 
-    // 3. Collection View (Grid Layout)
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 4 // Отступ между строками
-        layout.minimumInteritemSpacing = 4 // Отступ между столбцами
+        layout.minimumLineSpacing = 4
+        layout.minimumInteritemSpacing = 4
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        // Используем уже существующую ячейку
         cv.register(TrainingCardCell.self, forCellWithReuseIdentifier: TrainingCardCell.reuseID)
         cv.dataSource = self
         cv.delegate = self
         cv.showsVerticalScrollIndicator = false
         cv.backgroundColor = .backgroundMain
-        // Отступ контента снизу, чтобы не прилипало к краю экрана
-        cv.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
+        cv.contentInset = UIEdgeInsets(top: 8, left: 3, bottom: 20, right: 3)
         
         cv.layer.cornerRadius = 15
         cv.layer.masksToBounds = true
@@ -93,10 +78,14 @@ class PersonalTrainingVC: UIViewController {
         setupUI()
     }
     
-    // Скрываем NavigationBar, так как у нас свой кастомный хедер с картинкой
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        gradientLayer.frame = headerImageView.bounds
     }
 
     // MARK: - Setup UI
@@ -104,7 +93,6 @@ class PersonalTrainingVC: UIViewController {
     private func setupUI() {
         view.backgroundColor = .backgroundMain
 
-        // 1. Добавляем Header Image
         view.addSubview(headerImageView)
         
         headerImageView.snp.makeConstraints { make in
@@ -112,21 +100,21 @@ class PersonalTrainingVC: UIViewController {
             make.height.equalTo(310)
         }
         
-        // 2. Добавляем тексты на картинку
+        headerImageView.layer.addSublayer(gradientLayer)
+
         headerImageView.addSubview(headerTitleLabel)
         headerImageView.addSubview(headerSubtitleLabel)
         
         headerTitleLabel.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
-            make.bottom.equalTo(headerSubtitleLabel.snp.top).offset(-4)
+            make.bottom.equalTo(headerSubtitleLabel.snp.top)
         }
         
         headerSubtitleLabel.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-50) // Отступ от низа картинки
+            make.bottom.equalToSuperview().offset(-46)
         }
 
-        // 4. Добавляем Collection View
         view.addSubview(collectionView)
         
         collectionView.snp.makeConstraints { make in
@@ -165,7 +153,7 @@ extension PersonalTrainingVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let totalWidth = collectionView.frame.width
         
-        let padding: CGFloat = 4 * 2
+        let padding: CGFloat = 7 * 2
         let spacing: CGFloat = 4
         
         let availableWidth = totalWidth - padding - spacing
@@ -182,6 +170,7 @@ extension PersonalTrainingVC: UICollectionViewDelegateFlowLayout {
         let personalTrainingShortPassVC = PersonalTrainingShortPassVC()
         personalTrainingShortPassVC.hidesBottomBarWhenPushed = true
         personalTrainingShortPassVC.currentIndex = indexPath.row
+        personalTrainingShortPassVC.durationMinutes = trainingItems[indexPath.row].durationMinutes
         navigationController?.pushViewController(personalTrainingShortPassVC, animated: true)
     }
 }

@@ -7,12 +7,11 @@ class QuizFeedbackView: UIView {
     
     var isCorrect = false
     
-    // UI Elements
     private let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = .main(ofSize: 18)
         button.backgroundColor = .white
-        button.layer.cornerRadius = 24 // Скругление белой кнопки
+        button.layer.cornerRadius = 32
         return button
     }()
     
@@ -49,7 +48,7 @@ class QuizFeedbackView: UIView {
     }
     
     private func setupView() {
-        layer.cornerRadius = 24 // Скругление самой плашки
+        layer.cornerRadius = 40
         clipsToBounds = true
         
         addSubview(actionButton)
@@ -58,18 +57,16 @@ class QuizFeedbackView: UIView {
         addSubview(subtitleLabel)
         
         actionButton.addTarget(self, action: #selector(didTapAction), for: .touchUpInside)
-        
-        // Констрейнты
-        
+                
         actionButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.right.equalToSuperview().inset(20)
-            make.height.equalTo(56)
+            make.top.equalToSuperview().offset(8)
+            make.left.right.equalToSuperview().inset(8)
+            make.height.equalTo(64)
         }
         
         statusLabel.snp.makeConstraints { make in
             make.top.equalTo(actionButton.snp.bottom).offset(20)
-            make.centerX.equalToSuperview().offset(10) // Чуть сдвинем вправо из-за иконки
+            make.centerX.equalToSuperview().offset(10)
         }
         
         iconImageView.snp.makeConstraints { make in
@@ -78,7 +75,6 @@ class QuizFeedbackView: UIView {
             make.width.height.equalTo(24)
         }
         
-        // Подзаголовок (для ошибки)
         subtitleLabel.snp.makeConstraints { make in
             make.top.equalTo(statusLabel.snp.bottom).offset(8)
             make.centerX.equalToSuperview()

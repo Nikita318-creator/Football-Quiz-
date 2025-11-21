@@ -42,9 +42,7 @@ class TrainingCompletedVC: UIViewController {
     
     private lazy var durationLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(trainedMinutes)\nmin"
-        label.font = .main(ofSize: 28)
-        label.textColor = .primary
+        label.attributedText = getFormattedDurationString(minutes: trainedMinutes)
         label.textAlignment = .center
         label.numberOfLines = 2
         return label
@@ -65,7 +63,7 @@ class TrainingCompletedVC: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        view.backgroundColor = UIColor.primary.withAlphaComponent(0.3)
         
         setupContainerLayout()
         updateUI()
@@ -99,7 +97,7 @@ class TrainingCompletedVC: UIViewController {
     // MARK: - 1. Initial View
     private func setupInitialView() {
         let iconContainer = UIView()
-        iconContainer.backgroundColor = UIColor.activeColor.withAlphaComponent(0.4)
+        iconContainer.backgroundColor = UIColor.activeColor.withAlphaComponent(0.15)
         iconContainer.layer.cornerRadius = 50
         
         let iconImageView = UIImageView()
@@ -162,7 +160,7 @@ class TrainingCompletedVC: UIViewController {
         }
         
         doneButton.snp.makeConstraints { make in
-            make.top.equalTo(recordButton.snp.bottom).offset(12)
+            make.top.equalTo(recordButton.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(64)
             make.bottom.equalToSuperview().offset(-20)
@@ -193,18 +191,18 @@ class TrainingCompletedVC: UIViewController {
         containerView.addSubview(nextBtn)
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(40)
+            make.top.equalToSuperview().offset(32)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
         stack.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(40)
+            make.top.equalTo(titleLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
             make.width.equalTo(220)
         }
         
         nextBtn.snp.makeConstraints { make in
-            make.top.equalTo(stack.snp.bottom).offset(50)
+            make.top.equalTo(stack.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(64)
             make.bottom.equalToSuperview().offset(-20)
@@ -218,14 +216,13 @@ class TrainingCompletedVC: UIViewController {
         let starStack = UIStackView()
         starStack.axis = .horizontal
         starStack.distribution = .fillEqually
-        starStack.spacing = 8
+        starStack.spacing = 2
         
         starButtons = []
         for i in 1...5 {
             let btn = UIButton()
-            let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .medium)
-            btn.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
-            btn.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
+            btn.setImage(UIImage(named: "star"), for: .normal)
+            btn.setImage(UIImage(named: "starFill"), for: .selected)
             btn.tintColor = .backgroundMain
             btn.tag = i
             btn.addTarget(self, action: #selector(starTapped(_:)), for: .touchUpInside)
@@ -242,19 +239,19 @@ class TrainingCompletedVC: UIViewController {
         containerView.addSubview(nextBtn)
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(40)
+            make.top.equalToSuperview().offset(32)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
         starStack.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(40)
+            make.top.equalTo(titleLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
-            make.width.equalTo(260)
+            make.width.equalTo(210)
             make.height.equalTo(50)
         }
         
         nextBtn.snp.makeConstraints { make in
-            make.top.equalTo(starStack.snp.bottom).offset(50)
+            make.top.equalTo(starStack.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(64)
             make.bottom.equalToSuperview().offset(-20)
@@ -299,19 +296,19 @@ class TrainingCompletedVC: UIViewController {
         containerView.addSubview(doneBtn)
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(40)
+            make.top.equalToSuperview().offset(32)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
         moodStack.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(40)
+            make.top.equalTo(titleLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
             make.width.equalTo(250)
             make.height.equalTo(70)
         }
         
         doneBtn.snp.makeConstraints { make in
-            make.top.equalTo(moodStack.snp.bottom).offset(50)
+            make.top.equalTo(moodStack.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(64)
             make.bottom.equalToSuperview().offset(-20)
@@ -346,13 +343,13 @@ class TrainingCompletedVC: UIViewController {
     
     @objc private func increaseTime() {
         trainedMinutes += 1
-        durationLabel.text = "\(trainedMinutes)\nmin"
+        durationLabel.attributedText = getFormattedDurationString(minutes: trainedMinutes)
     }
     
     @objc private func decreaseTime() {
         if trainedMinutes > 0 {
             trainedMinutes -= 1
-            durationLabel.text = "\(trainedMinutes)\nmin"
+            durationLabel.attributedText = getFormattedDurationString(minutes: trainedMinutes)
         }
     }
     
@@ -421,5 +418,33 @@ class TrainingCompletedVC: UIViewController {
             make.width.height.equalTo(60)
         }
         return btn
+    }
+    
+    // MARK: - Helper
+    
+    private func getFormattedDurationString(minutes: Int) -> NSAttributedString {
+        let minutesString = "\(minutes)"
+        let minString = "\nmin"
+        let fullString = minutesString + minString
+        
+        let attributedString = NSMutableAttributedString(string: fullString)
+        
+        let minutesAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.main(ofSize: 32),
+            .foregroundColor: UIColor.primary
+        ]
+        
+        let minAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.second(ofSize: 14),
+            .foregroundColor: UIColor.secondTextColor
+        ]
+        
+        let minutesRange = (fullString as NSString).range(of: minutesString)
+        attributedString.addAttributes(minutesAttributes, range: minutesRange)
+        
+        let minRange = (fullString as NSString).range(of: minString)
+        attributedString.addAttributes(minAttributes, range: minRange)
+        
+        return attributedString
     }
 }

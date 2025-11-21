@@ -3,14 +3,12 @@ import SnapKit
 
 class QuizOptionView: UIView {
     
-    // State
     var isSelectedOption: Bool = false {
         didSet {
             updateAppearance()
         }
     }
     
-    // UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .second(ofSize: 17)
@@ -83,20 +81,16 @@ class QuizOptionView: UIView {
         
         if isSelectedOption {
             
-            // 1. Фон самой плашки темный
             backgroundColor = .primary
             
-            // 2. Цвет текста - светло-зеленый
             titleLabel.textColor = .activeColor
             
-            // 3. Внешнее кольцо
             radioCircle.layer.borderColor = UIColor.activeColor.cgColor
             radioCircle.layer.borderWidth = 1.5
             radioCircle.backgroundColor = .clear
             
-            // 4. Внутренняя точка
             radioCenterDot.isHidden = false
-            radioCenterDot.backgroundColor = .activeColor // Точка тоже зеленая
+            radioCenterDot.backgroundColor = .activeColor 
             
         } else {            
             backgroundColor = .white

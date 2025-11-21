@@ -29,7 +29,7 @@ class TrainingStepCard: UIView {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .second(ofSize: 16)
-        label.textColor = .secondTextColor
+        label.textColor = .textColor
         label.numberOfLines = 0
         return label
     }()

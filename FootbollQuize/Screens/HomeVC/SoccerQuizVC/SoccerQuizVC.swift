@@ -3,8 +3,6 @@ import SnapKit
 
 class SoccerQuizVC: UIViewController {
     
-    // MARK: - UI Components
-    
     let viewModel: SoccerQuizViewModel
     var currentQuestion = 0
     
@@ -14,9 +12,7 @@ class SoccerQuizVC: UIViewController {
 
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-        button.setImage(image, for: .normal)
+        button.setImage(UIImage(named: "backButton"), for: .normal)
         button.tintColor = .secondTextColor
         button.backgroundColor = .white
         button.layer.cornerRadius = 22
@@ -59,9 +55,16 @@ class SoccerQuizVC: UIViewController {
     private let answersStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 12
+        stack.spacing = 4
         stack.distribution = .fillEqually
         return stack
+    }()
+    
+    private let whiteContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 40
+        return view
     }()
     
     private lazy var checkButton: UIButton = {
@@ -91,14 +94,14 @@ class SoccerQuizVC: UIViewController {
                     return
                 }
                 progressBar.progress = Float(currentQuestion) / Float(viewModel.model.count)
-                setupData()
-                answersStackView.isUserInteractionEnabled = true
+                self.setupData()
+                self.answersStackView.isUserInteractionEnabled = true
                 
-                soccerQuizService.save(
+                self.soccerQuizService.save(
                     LastSoccerQuizData(
-                        modelIndex: viewModel.currentModelNumber,
-                        question: viewModel.model[currentQuestion].question,
-                        questionNumber: currentQuestion
+                        modelIndex: self.viewModel.currentModelNumber,
+                        question: self.viewModel.model[self.currentQuestion].question,
+                        questionNumber: self.currentQuestion
                     )
                 )
             }
@@ -117,8 +120,6 @@ class SoccerQuizVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -134,8 +135,6 @@ class SoccerQuizVC: UIViewController {
         progressBar.progress = Float(currentQuestion) / Float(viewModel.model.count)
     }
     
-    // MARK: - Setup UI
-    
     private func setupUI() {
         view.backgroundColor = .backgroundMain
         
@@ -144,13 +143,16 @@ class SoccerQuizVC: UIViewController {
         view.addSubview(subtitleLabel)
         view.addSubview(questionLabel)
         view.addSubview(answersStackView)
-        view.addSubview(checkButton)
-        view.addSubview(feedbackView) // Добавляем новую вьюшку
+        
+        view.addSubview(whiteContainerView)
+        whiteContainerView.addSubview(checkButton)
+        
+        view.addSubview(feedbackView)
         
         backButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
             make.left.equalToSuperview().offset(20)
-            make.width.height.equalTo(44)
+            make.width.height.equalTo(38)
         }
         
         progressBar.snp.makeConstraints { make in
@@ -171,25 +173,26 @@ class SoccerQuizVC: UIViewController {
         }
         
         answersStackView.snp.makeConstraints { make in
-            make.top.equalTo(questionLabel.snp.bottom).offset(30)
-            make.left.right.equalToSuperview().inset(20)
+            make.top.equalTo(questionLabel.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(8)
         }
         
-        // Обычная кнопка CHECK
+        whiteContainerView.snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
+        }
+        
         checkButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(8)
+            make.left.right.equalToSuperview().inset(8)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
-            make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(56)
         }
         
         feedbackView.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
-            make.left.right.equalToSuperview().inset(20)
+            make.left.right.bottom.equalToSuperview().inset(0)
             make.height.greaterThanOrEqualTo(140)
         }
     }
-    
-    // MARK: - Data & Logic
     
     private func setupData() {
         answersStackView.arrangedSubviews.forEach { view in
@@ -228,8 +231,6 @@ class SoccerQuizVC: UIViewController {
         optionViews[index].isSelectedOption = true
     }
     
-    // MARK: - Actions
-    
     @objc private func didTapCheck() {
         let correctOption = viewModel.model[currentQuestion].correctOption
         let isCorrect = correctOption == currentSelectedOption
@@ -238,7 +239,7 @@ class SoccerQuizVC: UIViewController {
         feedbackView.configure(isCorrect: isCorrect, correctAnswer: correctAnswerText)
 
         UIView.animate(withDuration: 0.3) {
-            self.checkButton.alpha = 0
+            self.whiteContainerView.alpha = 0
             self.feedbackView.isHidden = false
             self.feedbackView.alpha = 1
             self.optionViews[self.currentSelectedOption].updateAppearanceOnCheckTapped(isCorrect)
@@ -249,7 +250,7 @@ class SoccerQuizVC: UIViewController {
     
     private func resetState() {
         UIView.animate(withDuration: 0.3) {
-            self.checkButton.alpha = 1
+            self.whiteContainerView.alpha = 1
             self.feedbackView.alpha = 0
         } completion: { _ in
             self.feedbackView.isHidden = true
