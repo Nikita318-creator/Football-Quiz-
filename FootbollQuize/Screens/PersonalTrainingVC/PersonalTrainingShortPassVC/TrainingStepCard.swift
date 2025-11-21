@@ -7,7 +7,6 @@ class TrainingStepCard: UIView {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 16
-        // Легкая тень для карточки
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.05
         view.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -17,22 +16,21 @@ class TrainingStepCard: UIView {
     
     private let numberLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .main(ofSize: 24)
         label.textColor = .secondTextColor
         label.textAlignment = .center
-        // Делаем кружок вокруг цифры
         label.layer.borderColor = UIColor.systemGray5.cgColor
         label.layer.borderWidth = 2
-        label.layer.cornerRadius = 20 // Половина от размера 40
+        label.layer.cornerRadius = 20
         label.layer.masksToBounds = true
         return label
     }()
     
     private let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .second(ofSize: 16)
         label.textColor = .secondTextColor
-        label.numberOfLines = 0 // Многострочный текст
+        label.numberOfLines = 0
         return label
     }()
     

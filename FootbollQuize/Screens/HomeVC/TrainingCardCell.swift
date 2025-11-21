@@ -19,43 +19,36 @@ class TrainingCardCell: UICollectionViewCell {
     }
     
     private func setupCell() {
-        contentView.backgroundColor = .systemBackground // Фон ячейки
+        contentView.backgroundColor = .systemBackground
         contentView.layer.cornerRadius = 16
-        contentView.layer.masksToBounds = true // Важно для скругления
+        contentView.layer.masksToBounds = true
         
-        // Тень (для эффекта приподнятости)
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.08
         layer.shadowOffset = CGSize(width: 0, height: 4)
         layer.shadowRadius = 8
-        layer.masksToBounds = false // Тень должна быть видна за пределами contentView
+        layer.masksToBounds = false
         
-        // Настройка Title Label
         titleLabel.textColor = .textColor
-        titleLabel.font = .systemFont(ofSize: 18, weight: .regular)
+        titleLabel.font = .second(ofSize: 18)
         titleLabel.numberOfLines = 0
         
-        // Настройка Duration Label
         durationLabel.textColor = .textColor
-        durationLabel.font = .systemFont(ofSize: 34, weight: .bold) // Крупный жирный шрифт
+        durationLabel.font = .main(ofSize: 32)
         
-        // Настройка Minutes Label
         let minutesTextLabel = UILabel()
         minutesTextLabel.text = "Min"
         minutesTextLabel.textColor = .secondTextColor
-        minutesTextLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        minutesTextLabel.font = .second(ofSize: 15)
         
-        // Настройка Arrow Image
         arrowImageView.image = UIImage(named: "arrowTopRight")
         arrowImageView.tintColor = .primary
         
-        // Добавление элементов
         contentView.addSubview(titleLabel)
         contentView.addSubview(arrowImageView)
         contentView.addSubview(durationLabel)
         contentView.addSubview(minutesTextLabel)
 
-        // Констрейнты
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.left.equalToSuperview().offset(20)

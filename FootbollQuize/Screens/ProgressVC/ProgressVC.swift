@@ -30,7 +30,7 @@ class ProgressVC: UIViewController {
     private lazy var rankTitleLabel: UILabel = {
         let label = UILabel()
         label.text = viewModel.model.title
-        label.font = .systemFont(ofSize: 28, weight: .heavy)
+        label.font = .main(ofSize: 28)
         label.textColor = .primary
         label.textAlignment = .center
         return label
@@ -39,7 +39,7 @@ class ProgressVC: UIViewController {
     private lazy var rankSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = viewModel.model.subtitle
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .second(ofSize: 15)
         label.textColor = .secondTextColor
         label.textAlignment = .center
         return label
@@ -55,7 +55,7 @@ class ProgressVC: UIViewController {
     private lazy var scoreLabel: UILabel = {
         let label = UILabel()
         label.text = "\(viewModel.model.currentProgress) / \(viewModel.model.fullProgress)"
-        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.font = .main(ofSize: 14)
         label.textColor = .primary
         return label
     }()
@@ -75,7 +75,7 @@ class ProgressVC: UIViewController {
     private let nextRankLabel: UILabel = {
         let label = UILabel()
         label.text = "Next Rank:"
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .second(ofSize: 15)
         label.textColor = .secondTextColor
         return label
     }()
@@ -83,7 +83,7 @@ class ProgressVC: UIViewController {
     private lazy var legendBadge: UILabel = {
         let label = UILabel()
         label.text = viewModel.model.nextRank
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .second(ofSize: 14)
         label.textColor = .white
         label.backgroundColor = UIColor(hex: "#D4AF37")
         label.textAlignment = .center
@@ -92,7 +92,6 @@ class ProgressVC: UIViewController {
         return label
     }()
 
-    // --- DATE COLLECTION ---
     private lazy var dateCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -108,7 +107,6 @@ class ProgressVC: UIViewController {
         return cv
     }()
     
-    // --- EMPTY STATE VIEW ---
     private let emptyStateContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
@@ -125,7 +123,7 @@ class ProgressVC: UIViewController {
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
         label.text = "You haven’t trained on that day"
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .second(ofSize: 16)
         label.textColor = .secondTextColor
         label.textAlignment = .center
         return label
@@ -282,7 +280,6 @@ class ProgressVC: UIViewController {
             make.height.equalTo(22)
         }
         
-        // --- Calendar Layout ---
         contentView.addSubview(dateCollectionView)
         dateCollectionView.snp.makeConstraints { make in
             make.top.equalTo(topContainerView.snp.bottom).offset(20)
@@ -290,7 +287,6 @@ class ProgressVC: UIViewController {
             make.height.equalTo(80)
         }
         
-        // --- Empty State Layout ---
         contentView.addSubview(emptyStateContainer)
         emptyStateContainer.addSubview(emptyStateIcon)
         emptyStateContainer.addSubview(emptyStateLabel)
@@ -317,7 +313,7 @@ class ProgressVC: UIViewController {
         // --- Training List Layout ---
         contentView.addSubview(trainingCollectionView)
         trainingCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(dateCollectionView.snp.bottom).offset(10)
+            make.top.equalTo(dateCollectionView.snp.bottom).offset(2)
             make.left.right.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(-20)
             make.height.equalTo(400)

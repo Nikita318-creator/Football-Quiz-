@@ -36,7 +36,7 @@ class PersonalTrainingVC: UIViewController {
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "TRAINING"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .white
         
         label.layer.shadowColor = UIColor.black.cgColor
@@ -51,7 +51,7 @@ class PersonalTrainingVC: UIViewController {
     private let headerSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "New exercises!"
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .second(ofSize: 17)
         label.textColor = .white
         
         label.layer.shadowColor = UIColor.black.cgColor

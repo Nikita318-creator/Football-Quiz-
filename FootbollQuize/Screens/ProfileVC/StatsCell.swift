@@ -43,13 +43,13 @@ class StatsCell: UITableViewCell {
     private func createStatView(value: String, title: String, color: UIColor) -> UIView {
         let valueLabel = UILabel()
         valueLabel.text = value
-        valueLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        valueLabel.font = .main(ofSize: 24)
         valueLabel.textColor = color
         valueLabel.textAlignment = .center
         
         let titleLabel = UILabel()
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        titleLabel.font = .second(ofSize: 13)
         titleLabel.textColor = .secondaryLabel
         titleLabel.textAlignment = .center
         

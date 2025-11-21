@@ -10,7 +10,7 @@ class QuizFeedbackView: UIView {
     // UI Elements
     private let actionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        button.titleLabel?.font = .main(ofSize: 18)
         button.backgroundColor = .white
         button.layer.cornerRadius = 24 // Скругление белой кнопки
         return button
@@ -25,14 +25,14 @@ class QuizFeedbackView: UIView {
     
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = .main(ofSize: 18)
         label.textColor = .white
         return label
     }()
     
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .second(ofSize: 15)
         label.textColor = .white.withAlphaComponent(0.9)
         label.textAlignment = .center
         label.isHidden = true

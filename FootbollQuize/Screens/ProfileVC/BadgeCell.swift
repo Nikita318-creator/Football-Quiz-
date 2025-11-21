@@ -19,7 +19,7 @@ class BadgeCell: UITableViewCell {
     private func setupUI() {
         accessoryType = .disclosureIndicator
         
-        nameLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        nameLabel.font = .second(ofSize: 16)
         
         contentView.addSubview(iconImageView)
         contentView.addSubview(nameLabel)

@@ -43,14 +43,14 @@ class SoccerQuizVC: UIViewController {
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Soccer Quiz"
-        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.font = .second(ofSize: 18)
         label.textColor = .secondTextColor
         return label
     }()
     
     private let questionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .primary
         label.numberOfLines = 0
         return label
@@ -64,22 +64,20 @@ class SoccerQuizVC: UIViewController {
         return stack
     }()
     
-    // Кнопка проверки (обычная)
     private lazy var checkButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("CHECK", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        button.titleLabel?.font = .main(ofSize: 16)
         button.backgroundColor = .primary
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.activeColor, for: .normal)
         button.layer.cornerRadius = 28
         button.addTarget(self, action: #selector(didTapCheck), for: .touchUpInside)
         return button
     }()
     
-    // НОВЫЙ КОМПОНЕНТ: Вьюшка с результатом
     private lazy var feedbackView: QuizFeedbackView = {
         let view = QuizFeedbackView()
-        view.isHidden = true // Скрыта по умолчанию
+        view.isHidden = true
         view.onActionTap = { [weak self] isCorrect in
             guard let self else { return }
             
@@ -235,12 +233,10 @@ class SoccerQuizVC: UIViewController {
     @objc private func didTapCheck() {
         let correctOption = viewModel.model[currentQuestion].correctOption
         let isCorrect = correctOption == currentSelectedOption
-        let correctAnswerText = "Option \(correctOption + 1)" // так как с 0 начинается счет
+        let correctAnswerText = "Option \(correctOption + 1)"
         
-        // 1. Конфигурируем вьюшку
         feedbackView.configure(isCorrect: isCorrect, correctAnswer: correctAnswerText)
 
-        // 2. Анимация смены состояния
         UIView.animate(withDuration: 0.3) {
             self.checkButton.alpha = 0
             self.feedbackView.isHidden = false
@@ -248,16 +244,10 @@ class SoccerQuizVC: UIViewController {
             self.optionViews[self.currentSelectedOption].updateAppearanceOnCheckTapped(isCorrect)
         }
         
-        // 3. Блокируем нажатия на ответы, пока показывается результат
         answersStackView.isUserInteractionEnabled = false
     }
     
-    // Нажатие на кнопку Continue / Got It
     private func resetState() {
-        // Тут логика перехода к следующему вопросу
-        print("Next Question Logic")
-        
-        // Для теста вернем кнопку Check обратно
         UIView.animate(withDuration: 0.3) {
             self.checkButton.alpha = 1
             self.feedbackView.alpha = 0

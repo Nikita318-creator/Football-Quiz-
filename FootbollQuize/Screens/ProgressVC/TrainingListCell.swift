@@ -25,14 +25,14 @@ class TrainingListCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.font = .second(ofSize: 12)
         label.textColor = .secondTextColor
         return label
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.font = .second(ofSize: 17)
         label.textColor = .textColor
         return label
     }()
@@ -111,7 +111,7 @@ class TrainingListCell: UICollectionViewCell {
         
         let lbl = UILabel()
         lbl.text = text
-        lbl.font = .systemFont(ofSize: 12, weight: .medium)
+        lbl.font = .second(ofSize: 12)
         lbl.textColor = .primary
         
         view.addSubview(iv)

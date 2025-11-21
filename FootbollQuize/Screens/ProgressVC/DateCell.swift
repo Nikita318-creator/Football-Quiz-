@@ -13,14 +13,14 @@ class DateCell: UICollectionViewCell {
     
     private let dayLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .main(ofSize: 20)
         label.textAlignment = .center
         return label
     }()
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .medium)
+        label.font = .second(ofSize: 10)
         label.textAlignment = .center
         return label
     }()
@@ -66,19 +66,11 @@ class DateCell: UICollectionViewCell {
         if model.isSelected {
             containerView.backgroundColor = .primary
             dayLabel.textColor = .activeColor
-            monthLabel.textColor = .primary
-            monthLabel.isHidden = true
-            monthLabel.isHidden = false
-            monthLabel.textColor = .primary
-            
             monthLabel.textColor = .activeColor
-            monthLabel.font = .systemFont(ofSize: 8, weight: .bold)
         } else {
             containerView.backgroundColor = .clear
             dayLabel.textColor = .secondTextColor
-            
             monthLabel.textColor = .secondTextColor
-            monthLabel.font = .systemFont(ofSize: 10, weight: .medium)
         }
     }
 }

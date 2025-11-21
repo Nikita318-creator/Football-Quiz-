@@ -51,7 +51,7 @@ class PersonalTrainingShortPassVC: UIViewController {
         let label = UILabel()
         label.text = "SHORT PASS\nTRAINING"
         label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .white
         
         // Хорошая тень
@@ -68,7 +68,7 @@ class PersonalTrainingShortPassVC: UIViewController {
 
     private let headerSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .second(ofSize: 17)
         label.textColor = .white
         
         label.layer.shadowColor = UIColor.black.cgColor
@@ -101,7 +101,7 @@ class PersonalTrainingShortPassVC: UIViewController {
     private lazy var completedButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("COMPLETED", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        button.titleLabel?.font = .main(ofSize: 18)
         button.backgroundColor = .primary
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 28

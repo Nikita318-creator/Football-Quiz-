@@ -13,7 +13,7 @@ class QuizOptionView: UIView {
     // UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .second(ofSize: 17)
         label.textColor = .textColor
         return label
     }()

@@ -4,8 +4,13 @@
 <dict>
     <key>CFBundleDisplayName</key>
     <string>Foot Master</string>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
+    <key>UIAppFonts</key>
+    <array>
+        <string>mainFont.ttf</string>
+        <string>secondFont.ttf</string>
+    </array>
+    <key>UIApplicationSceneManifest</key>
+    <dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>

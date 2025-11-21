@@ -44,8 +44,8 @@ class UserInfoCell: UITableViewCell {
         avatarImageView.layer.cornerRadius = 40 // Круглый
         avatarImageView.clipsToBounds = true
         
-        nameLabel.font = .systemFont(ofSize: 22, weight: .bold)
-        countryLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        nameLabel.font = .main(ofSize: 22)
+        countryLabel.font = .second(ofSize: 15)
         countryLabel.textColor = .secondaryLabel
         
         let textStack = UIStackView(arrangedSubviews: [nameLabel, countryLabel])

@@ -27,7 +27,6 @@ class HomeVC: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    // 1. Navigation Bar Elements (для Custom Navigation)
     private lazy var logoButton: UIButton = {
         let button = UIButton(type: .system)
         if let image = UIImage(named: "LOGO") {
@@ -43,13 +42,12 @@ class HomeVC: UIViewController {
         return button
     }()
     
-    private let navBarContainer = UIView() // Контейнер для LOGO и Settings
+    private let navBarContainer = UIView()
     
-    // 2. Main Title/Subtitle
     private let mainTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "MY TRAINING"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .primary
         return label
     }()
@@ -57,16 +55,15 @@ class HomeVC: UIViewController {
     private let mainSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Recommended for today"
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .second(ofSize: 17)
         label.textColor = .secondTextColor
         return label
     }()
     
-    // 3. Collection View (для карточек тренировок)
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 16 // Расстояние между ячейками
+        layout.minimumInteritemSpacing = 16
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.register(TrainingCardCell.self, forCellWithReuseIdentifier: TrainingCardCell.reuseID)
@@ -77,11 +74,10 @@ class HomeVC: UIViewController {
         return cv
     }()
     
-    // 4. Quiz Section Title/Subtitle
     private let quizTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "SOCCER QUIZ"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .primary
         return label
     }()
@@ -89,22 +85,20 @@ class HomeVC: UIViewController {
     private let quizSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Learn soccer theory and history"
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .second(ofSize: 17)
         label.textColor = .secondTextColor
         return label
     }()
     
-    // 5. Quiz Card View
     private lazy var quizCardView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemBackground // Фон карточки
+        view.backgroundColor = .systemBackground
         view.layer.cornerRadius = 16
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.08
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
         view.layer.shadowRadius = 8
         
-        // Добавляем Tap Gesture Recognizer
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapQuizCard))
         view.addGestureRecognizer(tap)
         
@@ -114,14 +108,14 @@ class HomeVC: UIViewController {
     private let progressLabel: UILabel = {
         let label = UILabel()
         label.text = "Quiz progression"
-        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.font = .second(ofSize: 18)
         label.textColor = .textColor
         return label
     }()
     
     private let progressValueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .main(ofSize: 32)
         label.textColor = .textColor
         return label
     }()
@@ -140,14 +134,14 @@ class HomeVC: UIViewController {
     
     private let continueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.font = .second(ofSize: 17)
         label.textColor = .textColor
         return label
     }()
     
     private let continueSubLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .second(ofSize: 15)
         label.textColor = .secondTextColor
         label.numberOfLines = 0
         return label
@@ -163,6 +157,13 @@ class HomeVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        
+//        for family in UIFont.familyNames {
+//            for name in UIFont.fontNames(forFamilyName: family) {
+//                print(name) // Это и есть точное PostScript-имя
+//            }
+//        }
+        
         setupUI()
         updateQuizCard(with: quizData)
     }

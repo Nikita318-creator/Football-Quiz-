@@ -43,7 +43,7 @@ class TrainingCompletedVC: UIViewController {
     private lazy var durationLabel: UILabel = {
         let label = UILabel()
         label.text = "\(trainedMinutes)\nmin"
-        label.font = .systemFont(ofSize: 28, weight: .heavy)
+        label.font = .main(ofSize: 28)
         label.textColor = .primary
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -109,14 +109,14 @@ class TrainingCompletedVC: UIViewController {
         
         let titleLabel = UILabel()
         titleLabel.text = "TRAINING\nCOMPLETE"
-        titleLabel.font = .systemFont(ofSize: 28, weight: .heavy)
+        titleLabel.font = .main(ofSize: 28)
         titleLabel.textColor = .primary
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 2
         
         let subtitleLabel = UILabel()
         subtitleLabel.text = "You have successfully completed\n“\(trainingTitle)”"
-        subtitleLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        subtitleLabel.font = .second(ofSize: 16)
         subtitleLabel.textColor = .secondTextColor
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0
@@ -393,7 +393,7 @@ class TrainingCompletedVC: UIViewController {
     private func createButton(title: String, bgColor: UIColor, titleColor: UIColor) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.font = .main(ofSize: 16)
         button.backgroundColor = bgColor
         button.setTitleColor(titleColor, for: .normal)
         button.layer.cornerRadius = 32
@@ -403,7 +403,7 @@ class TrainingCompletedVC: UIViewController {
     private func createHeaderLabel(text: String) -> UILabel {
         let label = UILabel()
         label.text = text
-        label.font = .systemFont(ofSize: 28, weight: .heavy)
+        label.font = .main(ofSize: 28)
         label.textColor = .primary
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -414,7 +414,7 @@ class TrainingCompletedVC: UIViewController {
         let btn = UIButton(type: .system)
         btn.setTitle(title, for: .normal)
         btn.setTitleColor(.primary, for: .normal)
-        btn.titleLabel?.font = .systemFont(ofSize: 32, weight: .medium)
+        btn.titleLabel?.font = .main(ofSize: 32)
         btn.backgroundColor = .backgroundMain
         btn.layer.cornerRadius = 16
         btn.snp.makeConstraints { make in
