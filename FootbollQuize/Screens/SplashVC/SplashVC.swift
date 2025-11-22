@@ -7,9 +7,8 @@ class SplashVC: UIViewController {
 
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .bold)
-//        imageView.image = UIImage(systemName: "sportscourt.fill", withConfiguration: config) // test111
-        imageView.tintColor = .white
+        imageView.image = UIImage(named: "") //UIImage(named: "SplashIcon")
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -25,13 +24,14 @@ class SplashVC: UIViewController {
         
         logoImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            make.height.width.equalTo(200)
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // test111
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.actionOnDismiss?()
         }
     }
