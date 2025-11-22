@@ -341,7 +341,9 @@ class HomeVC: UIViewController {
     // MARK: - Actions
 
     @objc private func didTapSettings() {
-        // test111
+        let settingsVC = SettingsVC()
+//        soccerQuizVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(settingsVC, animated: true)
     }
     
     @objc private func didTapQuizCard() {
