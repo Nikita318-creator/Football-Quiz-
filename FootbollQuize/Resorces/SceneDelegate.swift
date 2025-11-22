@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.makeKeyAndVisible()
     }
     
-    private func createMainTabBar() -> UITabBarController {
+    private func createMainTabBar() -> UIViewController {
         
         let homeVC = HomeVC()
         let personalTrainingVC = PersonalTrainingVC()
@@ -47,23 +47,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         progressVC.title = "Progress"
         progressNavController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "profileTab")?.withRenderingMode(.alwaysTemplate), tag: 2)
         
-        // 4. Создание UITabBarController
-        let tabBarController = UITabBarController()
+        let tabBarController = CustomTabContainer()
+        
         tabBarController.viewControllers = [
             homeNavController,
             personalTrainingNavController,
             progressNavController
         ]
-        
-        let activeColor = UIColor.activeColor
-        let appearance = UITabBarAppearance()
-        appearance.backgroundColor = .primary
-        appearance.stackedLayoutAppearance.selected.iconColor = activeColor
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: activeColor]
-        tabBarController.tabBar.standardAppearance = appearance
-        tabBarController.tabBar.scrollEdgeAppearance = appearance
-        tabBarController.tabBar.tintColor = activeColor
-
+                
         return tabBarController
     }
 }

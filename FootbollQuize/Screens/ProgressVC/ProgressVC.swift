@@ -268,8 +268,6 @@ class ProgressVC: UIViewController {
         legendBadge.snp.makeConstraints { make in
             make.centerY.equalTo(nextRankLabel)
             make.right.equalTo(customProgressBar)
-            make.width.equalTo(80)
-            make.height.equalTo(22)
         }
         
         contentView.addSubview(dateCollectionView)
