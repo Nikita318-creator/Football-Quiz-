@@ -32,7 +32,7 @@ class TrainingListCell: UICollectionViewCell {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .second(ofSize: 17)
+        label.font = .second(ofSize: 18)
         label.textColor = .textColor
         return label
     }()
@@ -40,7 +40,7 @@ class TrainingListCell: UICollectionViewCell {
     private let badgesStack: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
-        sv.spacing = 8
+        sv.spacing = 4
         return sv
     }()
     
@@ -89,15 +89,23 @@ class TrainingListCell: UICollectionViewCell {
         timeLabel.text = "\(item.duration) minutes long"
         titleLabel.text = item.title
         
-        // Clear old badges
         badgesStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        // Mood Badge
-        let moodBadge = createBadge(icon: "face.smiling", text: "Mood: \(item.mood)")
+        let moodIconName: String
+        switch item.mood {
+        case "bad":
+            moodIconName = "grammerlyDislike"
+        case "fine":
+            moodIconName = "grammerly"
+        case "good":
+            moodIconName = "grammerlyLike"
+        default:
+            moodIconName = "grammerlyLike"
+        }
+        let moodBadge = createBadge(icon: moodIconName, text: "Mood: \(item.mood.capitalizedFirst)")
         badgesStack.addArrangedSubview(moodBadge)
         
-        // Fatigue Badge
-        let fatigueBadge = createBadge(icon: "star.fill", text: "Fatigue: \(item.fatigue)/5")
+        let fatigueBadge = createBadge(icon: "starSmall", text: "Fatigue: \(item.fatigue)/5")
         badgesStack.addArrangedSubview(fatigueBadge)
     }
     
@@ -106,21 +114,21 @@ class TrainingListCell: UICollectionViewCell {
         view.backgroundColor = .backgroundMain
         view.layer.cornerRadius = 13
         
-        let iv = UIImageView(image: UIImage(systemName: icon))
+        let iv = UIImageView(image: UIImage(named: icon))
         iv.tintColor = .secondTextColor
         
         let lbl = UILabel()
         lbl.text = text
-        lbl.font = .second(ofSize: 12)
+        lbl.font = .second(ofSize: 14)
         lbl.textColor = .primary
         
         view.addSubview(iv)
         view.addSubview(lbl)
         
         iv.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(10)
+            make.left.equalToSuperview().offset(2)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(12)
+            make.width.height.equalTo(22)
         }
         
         lbl.snp.makeConstraints { make in

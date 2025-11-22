@@ -6,21 +6,21 @@ class DateCell: UICollectionViewCell {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 25
+        view.layer.cornerRadius = 32
         view.layer.masksToBounds = true
         return view
     }()
     
     private let dayLabel: UILabel = {
         let label = UILabel()
-        label.font = .main(ofSize: 20)
+        label.font = .second(ofSize: 24)
         label.textAlignment = .center
         return label
     }()
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.font = .second(ofSize: 10)
+        label.font = .second(ofSize: 12)
         label.textAlignment = .center
         return label
     }()
@@ -40,7 +40,7 @@ class DateCell: UICollectionViewCell {
         containerView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(50)
+            make.width.height.equalTo(64)
         }
         
         monthLabel.snp.makeConstraints { make in

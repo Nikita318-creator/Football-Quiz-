@@ -5,7 +5,7 @@ class TrainingCompletedVC: UIViewController {
     
     // MARK: - Data Types
     enum MoodType {
-        case bad, neutral, fine
+        case bad, fine, good
     }
     
     enum Step {
@@ -24,7 +24,7 @@ class TrainingCompletedVC: UIViewController {
     
     private var trainedMinutes: Int = 5
     private var tirednessRating: Int = 3
-    private var selectedMood: MoodType = .neutral
+    private var selectedMood: MoodType = .fine
     
     private var starButtons: [UIButton] = []
     private var moodButtons: [UIButton] = []
@@ -268,7 +268,7 @@ class TrainingCompletedVC: UIViewController {
         moodStack.spacing = 20
         
         moodButtons = []
-        let moods: [MoodType] = [.bad, .neutral, .fine]
+        let moods: [MoodType] = [.bad, .fine, .good]
         
         for (index, _) in moods.enumerated() {
             let btn = UIButton()
@@ -371,7 +371,7 @@ class TrainingCompletedVC: UIViewController {
     }
     
     @objc private func moodTapped(_ sender: UIButton) {
-        let moods: [MoodType] = [.bad, .neutral, .fine]
+        let moods: [MoodType] = [.bad, .fine, .good]
         selectedMood = moods[sender.tag]
         
         for (index, btn) in moodButtons.enumerated() {

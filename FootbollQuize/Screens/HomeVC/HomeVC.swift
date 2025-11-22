@@ -125,9 +125,9 @@ class HomeVC: UIViewController {
         progress.progressTintColor = .activeColor 
         progress.trackTintColor = .primary
         progress.progress = 0.1
-        progress.layer.cornerRadius = 8
+        progress.layer.cornerRadius = 7.5
         progress.layer.masksToBounds = true
-        progress.layer.borderWidth = 2
+        progress.layer.borderWidth = 3
         progress.layer.borderColor = UIColor.primary.cgColor
         return progress
     }()

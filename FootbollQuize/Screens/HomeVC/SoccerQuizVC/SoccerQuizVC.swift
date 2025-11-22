@@ -29,9 +29,9 @@ class SoccerQuizVC: UIViewController {
         progress.progressTintColor = .primary
         progress.trackTintColor = .white
         progress.progress = 0.0
-        progress.layer.cornerRadius = 8
+        progress.layer.cornerRadius = 7.5
         progress.layer.masksToBounds = true
-        progress.layer.borderWidth = 2
+        progress.layer.borderWidth = 3
         progress.layer.borderColor = UIColor.white.cgColor
         return progress
     }()
@@ -159,7 +159,7 @@ class SoccerQuizVC: UIViewController {
             make.centerY.equalTo(backButton)
             make.left.equalTo(backButton.snp.right).offset(20)
             make.right.equalToSuperview().offset(-20)
-            make.height.equalTo(16)
+            make.height.equalTo(15)
         }
         
         subtitleLabel.snp.makeConstraints { make in

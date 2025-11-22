@@ -19,6 +19,7 @@ struct ProgressDataModel {
     var currentProgress: Int = 0
     var fullProgress: Int = 0
     let nextRank: String
+    let nextRankImageName: String
 }
 
 class ProgressViewModel {
@@ -80,37 +81,43 @@ class ProgressViewModel {
             title: "NO RANK",
             subtitle: "Complete 1 training",
             imageName: "progressImage0",
-            nextRank: "NEWBIE"
+            nextRank: "NEWBIE",
+            nextRankImageName: "NEWBIE"
         ),
         ProgressDataModel(
             title: "NEWBIE",
             subtitle: "Complete 3 quizes",
             imageName: "progressImage1",
-            nextRank: "Player"
+            nextRank: "Player",
+            nextRankImageName: "Player"
         ),
         ProgressDataModel(
             title: "Player",
             subtitle: "Complete 10 training",
             imageName: "progressImage2",
-            nextRank: "Midfielder"
+            nextRank: "Midfielder",
+            nextRankImageName: "Midfielder"
         ),
         ProgressDataModel(
             title: "Midfielder",
             subtitle: "Complete 20 training",
             imageName: "progressImage3",
-            nextRank: "Captain"
+            nextRank: "Captain",
+            nextRankImageName: "Captain"
         ),
         ProgressDataModel(
             title: "Captain",
             subtitle: "Complete 50 training",
             imageName: "progressImage4",
-            nextRank: "Legend"
+            nextRank: "Legend",
+            nextRankImageName: "Legend"
         ),
         ProgressDataModel(
             title: "Legend",
             subtitle: "",
             imageName: "progressImage5",
-            nextRank: ""
+            nextRank: "",
+            nextRankImageName: ""
         )
     ]
 }

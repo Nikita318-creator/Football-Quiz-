@@ -13,7 +13,6 @@ class ProgressVC: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    // --- TOP SECTION ---
     private let topContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -65,9 +64,9 @@ class ProgressVC: UIViewController {
         progress.progressTintColor = .activeColor
         progress.trackTintColor = .primary
         progress.progress = 0.1 
-        progress.layer.cornerRadius = 8
+        progress.layer.cornerRadius = 7.5
         progress.layer.masksToBounds = true
-        progress.layer.borderWidth = 2
+        progress.layer.borderWidth = 3
         progress.layer.borderColor = UIColor.primary.cgColor
         return progress
     }()
@@ -80,23 +79,17 @@ class ProgressVC: UIViewController {
         return label
     }()
     
-    private lazy var legendBadge: UILabel = {
-        let label = UILabel()
-        label.text = viewModel.model.nextRank
-        label.font = .second(ofSize: 14)
-        label.textColor = .white
-        label.backgroundColor = UIColor(hex: "#D4AF37")
-        label.textAlignment = .center
-        label.layer.cornerRadius = 11
-        label.layer.masksToBounds = true
-        return label
+    private lazy var legendBadge: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: viewModel.model.nextRankImageName)
+        return imageView
     }()
 
     private lazy var dateCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 10
-        layout.itemSize = CGSize(width: 50, height: 70)
+        layout.itemSize = CGSize(width: 64, height: 64)
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
@@ -129,11 +122,10 @@ class ProgressVC: UIViewController {
         return label
     }()
     
-    // --- TRAINING LIST ---
     private lazy var trainingCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 12
+        layout.minimumLineSpacing = 4
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
@@ -174,7 +166,7 @@ class ProgressVC: UIViewController {
         let progressRatio = full > 0 ? Float(current) / Float(full) : 0.0
         customProgressBar.setProgress(progressRatio, animated: true)
         
-        legendBadge.text = viewModel.model.nextRank
+        legendBadge.image = UIImage(named: viewModel.model.nextRankImageName)
         setupData()
         
         dateCollectionView.reloadData()
@@ -231,7 +223,7 @@ class ProgressVC: UIViewController {
         
         topContainerView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.left.right.equalToSuperview().inset(10)
+            make.left.right.equalToSuperview().inset(8)
         }
         
         progressImageView.snp.makeConstraints { make in
@@ -264,7 +256,7 @@ class ProgressVC: UIViewController {
         customProgressBar.snp.makeConstraints { make in
             make.top.equalTo(scoreBadgeView.snp.bottom).offset(12)
             make.left.right.equalToSuperview().inset(24)
-            make.height.equalTo(16)
+            make.height.equalTo(15)
         }
         
         nextRankLabel.snp.makeConstraints { make in
@@ -282,7 +274,7 @@ class ProgressVC: UIViewController {
         
         contentView.addSubview(dateCollectionView)
         dateCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(topContainerView.snp.bottom).offset(20)
+            make.top.equalTo(topContainerView.snp.bottom).offset(16)
             make.left.right.equalToSuperview()
             make.height.equalTo(80)
         }
@@ -313,8 +305,8 @@ class ProgressVC: UIViewController {
         // --- Training List Layout ---
         contentView.addSubview(trainingCollectionView)
         trainingCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(dateCollectionView.snp.bottom).offset(2)
-            make.left.right.equalToSuperview().inset(20)
+            make.top.equalTo(dateCollectionView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().offset(-20)
             make.height.equalTo(400)
         }
@@ -337,7 +329,7 @@ class ProgressVC: UIViewController {
     
     private func updateTrainingsHeight() {
         guard !trainings.isEmpty else { return }
-        let height = CGFloat(trainings.count) * 122.0
+        let height = CGFloat(trainings.count) * 132.0
         trainingCollectionView.snp.updateConstraints { make in
             make.height.equalTo(height)
         }
@@ -391,16 +383,16 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == dateCollectionView {
-            return CGSize(width: 50, height: 70)
+            return CGSize(width: 64, height: 64)
         } else {
             let width = collectionView.frame.width
-            return CGSize(width: width, height: 110)
+            return CGSize(width: width, height: 120)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if collectionView == dateCollectionView {
-            return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+            return UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         }
         return .zero
     }
