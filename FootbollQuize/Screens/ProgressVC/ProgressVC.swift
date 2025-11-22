@@ -189,7 +189,7 @@ class ProgressVC: UIViewController {
             }
         }
         
-        trainings = viewModel.progressRecords.map {
+        trainings = viewModel.getProgressRecords(for: Date()).map {
             TrainingSession(title: "Short pass training", duration: $0.time, mood: $0.mood, fatigue: $0.stars)
         }
     }
@@ -327,7 +327,7 @@ class ProgressVC: UIViewController {
     
     private func updateTrainingsHeight() {
         guard !trainings.isEmpty else { return }
-        let height = CGFloat(trainings.count) * 132.0
+        let height = CGFloat(trainings.count) * 132.0 + (trainings.count == 0 ? 0 : 100)
         trainingCollectionView.snp.updateConstraints { make in
             make.height.equalTo(height)
         }
@@ -366,12 +366,8 @@ extension ProgressVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             calendarDates[indexPath.item].isSelected = true
             dateCollectionView.reloadData()
             
-            if indexPath.item == calendarDates.count - 1 {
-                trainings = viewModel.progressRecords.map {
-                    TrainingSession(title: "Short pass training", duration: $0.time, mood: $0.mood, fatigue: $0.stars)
-                }
-            } else {
-                trainings = []
+            trainings = viewModel.getProgressRecords(for: calendarDates[indexPath.item].date).map {
+                TrainingSession(title: "Short pass training", duration: $0.time, mood: $0.mood, fatigue: $0.stars)
             }
             
             trainingCollectionView.reloadData()

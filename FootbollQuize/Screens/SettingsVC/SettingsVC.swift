@@ -90,7 +90,7 @@ class SettingsVC: UIViewController {
         let label = UILabel()
         label.text = title
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .black
+        label.textColor = .textColor
         label.isUserInteractionEnabled = false
         
         let arrowImage = UIImageView(image: UIImage(named: "arrowRight"))
