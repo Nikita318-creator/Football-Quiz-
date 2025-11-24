@@ -1,6 +1,6 @@
 workflows:
   my-ios-build:
-    name: Quick Invoice iOS Build and App Store Deployment
+    name: iOS Build and App Store Deployment
     max_build_duration: 60
     
     environment:
@@ -27,10 +27,10 @@ workflows:
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE --create
             
-      - name: Use system default keychain and install certificates
-        script: |
-          # Установка P12-сертификата (если загружен в UI)
-          keychain add-certificates
+     # УДАЛИТЬ ИЛИ ПРОПУСТИТЬ ШАГ С РУЧНОЙ УСТАНОВКОЙ .P12
+  # - name: Use system default keychain and install certificates
+  #   script: |
+  #     keychain add-certificates
           
       - name: Set up code signing settings on Xcode project
         script: |
