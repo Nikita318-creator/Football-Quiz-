@@ -5,7 +5,7 @@ workflows:
     
     environment:
       groups:
-        - app_store_credentials # Убедись, что переменные (KEY, ISSUER_ID, KEY_ID) здесь заданы верно
+        - app_store_credentials # Проверь, что тут есть KEY_ID, ISSUER_ID и само тело KEY
       vars:
         BUNDLE_ID: "com.footmastrs.socc"
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
@@ -16,14 +16,44 @@ workflows:
       - name: Set up keychain
         script: keychain initialize
           
-      - name: Fetch Signing Files (Codemagic CLI)
+      - name: Force Generate Signing Files (Ruby script)
         script: |
-          # Эта команда сама берет ключи из environment groups
-          # Сама генерирует/скачивает сертификат и профиль
-          # И кладет их куда нужно для xcode-project
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
+          # Создаем скрипт на лету, чтобы не мучиться с аргументами шелла
+          cat <<EOF > build_certs.rb
+          require 'fastlane'
+          
+          # 1. Настраиваем подключение к API
+          api_key = Fastlane::Actions::AppStoreConnectApiKeyAction.run(
+            key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
+            issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+            key_content: ENV['APP_STORE_CONNECT_PRIVATE_KEY'],
+            duration: 1200,
+            in_house: false
+          )
+          
+          # 2. Генерируем сертификат (cert)
+          # force: true - КЛЮЧЕВОЙ МОМЕНТ. Создаст новый cert + приватный ключ локально, 
+          # даже если на портале уже есть другие сертификаты.
+          Fastlane::Actions::GetCertificatesAction.run(
+            api_key: api_key,
+            type: "distribution",
+            readonly: false,
+            force: true 
+          )
+          
+          # 3. Генерируем профиль (sigh)
+          # force: true - пересоздаст профиль, чтобы он привязался к НОВОМУ сертификату
+          Fastlane::Actions::GetProvisioningProfileAction.run(
+            api_key: api_key,
+            app_identifier: ENV['BUNDLE_ID'],
+            type: "appstore",
+            readonly: false,
+            force: true
+          )
+          EOF
+          
+          # Запускаем этот скрипт
+          ruby build_certs.rb
 
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
