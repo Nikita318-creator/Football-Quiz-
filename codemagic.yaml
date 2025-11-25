@@ -12,37 +12,37 @@ workflows:
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
         XCODE_SCHEME: "FootbollQuize"
       
-      xcode: latest # Используем последнюю версию Xcode
+      xcode: latest
     
     scripts:
       
-      # 1. ГЕНЕРАЦИЯ СЕРТИФИКАТА И УСТАНОВКА В СВЯЗКУ КЛЮЧЕЙ
-      - name: Generate and Install Signing Certificate
+      # Инициализация связки ключей остается
+      - name: Set up keychain
         script: |
-          # Эта команда использует P8-ключ для создания (если нет) или 
-          # загрузки (если есть) сертификата iOS Distribution, 
-          # включая приватный ключ, и устанавливает его в связку ключей.
-          app-store-connect generate-certificate \
-            --type IOS_DISTRIBUTION
+          keychain initialize
           
-      # 2. ПОЛУЧЕНИЕ ИЛИ СОЗДАНИЕ ПРОФИЛЕЙ PROVISIONING
-      - name: Fetch Provisioning Profiles
+      # 1. ЕДИНЫЙ ШАГ: Создание/Установка Сертификата И Получение Профилей
+      - name: Fetch and Install Signing Files
         script: |
-          # Теперь, когда сертификат установлен, эта команда может 
-          # успешно создать или загрузить профиль provisioning.
+          # Эта команда использует P8-ключ:
+          # 1. Проверяет наличие сертификата IOS_DISTRIBUTION. Если его нет, создает его.
+          # 2. Устанавливает этот сертификат (включая приватный ключ) в связку ключей.
+          # 3. Получает или создает профиль IOS_APP_STORE, используя этот сертификат.
+          # 4. Сохраняет профиль локально.
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE --create
-          
-      # 3. ПРИМЕНЕНИЕ ПРОФИЛЕЙ К ПРОЕКТУ
+            --type IOS_APP_STORE \
+            --create \
+            --certificate-type IOS_DISTRIBUTION # <-- Это ключевой флаг!
+            
+      # 2. ПРИМЕНЕНИЕ ПРОФИЛЕЙ К ПРОЕКТУ
       - name: Set up code signing settings on Xcode project
         script: |
           # Применяем скачанные профили к проекту
           xcode-project use-profiles
           
-      # 4. СБОРКА IPA
+      # 3. СБОРКА IPA
       - name: Build ipa for distribution
         script: |
-          # Сборка ipa с использованием ваших схемы и проекта
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
@@ -53,8 +53,7 @@ workflows:
       
     publishing:
       app_store_connect:
-        # Используем переменные, загруженные из группы 'app_store_credentials'
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true # Отправляем билд в TestFlight
+        submit_to_testflight: true
