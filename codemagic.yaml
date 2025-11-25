@@ -5,7 +5,7 @@ workflows:
     
     environment:
       groups:
-        - app_store_credentials
+        - app_store_credentials # Убедись, что переменные (KEY, ISSUER_ID, KEY_ID) здесь заданы верно
       vars:
         BUNDLE_ID: "com.footmastrs.socc"
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
@@ -16,30 +16,14 @@ workflows:
       - name: Set up keychain
         script: keychain initialize
           
-      - name: Fetch Signing Files via Fastlane
+      - name: Fetch Signing Files (Codemagic CLI)
         script: |
-          # 1. Сохраняем ключ из переменной во временный файл (Fastlane требует файл)
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/auth_key.p8
-          
-          # 2. Генерируем или скачиваем Сертификат (и создает приватный ключ локально!)
-          fastlane run get_certificates \
-             api_key_path:"/tmp/auth_key.p8" \
-             key_id:"$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-             issuer_id:"$APP_STORE_CONNECT_ISSUER_ID" \
-             type:"distribution" \
-             readonly:false
-             
-          # 3. Генерируем или скачиваем Профиль
-          fastlane run get_provisioning_profile \
-             api_key_path:"/tmp/auth_key.p8" \
-             key_id:"$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-             issuer_id:"$APP_STORE_CONNECT_ISSUER_ID" \
-             app_identifier:"$BUNDLE_ID" \
-             type:"appstore" \
-             readonly:false
-
-          # Удаляем временный ключ
-          rm /tmp/auth_key.p8
+          # Эта команда сама берет ключи из environment groups
+          # Сама генерирует/скачивает сертификат и профиль
+          # И кладет их куда нужно для xcode-project
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
 
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
