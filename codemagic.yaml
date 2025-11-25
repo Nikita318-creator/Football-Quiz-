@@ -8,39 +8,42 @@ workflows:
         - app_store_credentials
       vars:
         BUNDLE_ID: "com.footmastrs.socc"
-        
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
         XCODE_SCHEME: "FootbollQuize"
-      
       xcode: latest
     
     scripts:
-      
-      # Инициализация связки ключей остается
       - name: Set up keychain
-        script: |
-          keychain initialize
+        script: keychain initialize
           
-      # 1. ЕДИНЫЙ ШАГ: Создание/Установка Сертификата И Получение Профилей
-      - name: Fetch and Install Signing Files
+      - name: Fetch Signing Files via Fastlane
         script: |
-          # Эта команда использует P8-ключ:
-          # 1. Проверяет наличие сертификата IOS_DISTRIBUTION. Если его нет, создает его.
-          # 2. Устанавливает этот сертификат (включая приватный ключ) в связку ключей.
-          # 3. Получает или создает профиль IOS_APP_STORE, используя этот сертификат.
-          # 4. Сохраняет профиль локально.
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create \
-            --certificate-type IOS_DISTRIBUTION # <-- Это ключевой флаг!
-            
-      # 2. ПРИМЕНЕНИЕ ПРОФИЛЕЙ К ПРОЕКТУ
+          # 1. Сохраняем ключ из переменной во временный файл (Fastlane требует файл)
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/auth_key.p8
+          
+          # 2. Генерируем или скачиваем Сертификат (и создает приватный ключ локально!)
+          fastlane run get_certificates \
+             api_key_path:"/tmp/auth_key.p8" \
+             key_id:"$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+             issuer_id:"$APP_STORE_CONNECT_ISSUER_ID" \
+             type:"distribution" \
+             readonly:false
+             
+          # 3. Генерируем или скачиваем Профиль
+          fastlane run get_provisioning_profile \
+             api_key_path:"/tmp/auth_key.p8" \
+             key_id:"$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+             issuer_id:"$APP_STORE_CONNECT_ISSUER_ID" \
+             app_identifier:"$BUNDLE_ID" \
+             type:"appstore" \
+             readonly:false
+
+          # Удаляем временный ключ
+          rm /tmp/auth_key.p8
+
       - name: Set up code signing settings on Xcode project
-        script: |
-          # Применяем скачанные профили к проекту
-          xcode-project use-profiles
+        script: xcode-project use-profiles
           
-      # 3. СБОРКА IPA
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
