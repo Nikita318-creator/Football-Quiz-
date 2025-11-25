@@ -10,66 +10,35 @@ workflows:
         BUNDLE_ID: "com.footmastrs.socc"
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
         XCODE_SCHEME: "FootbollQuize"
-        # ЭТА ПЕРЕМЕННАЯ КРИТИЧЕСКИ ВАЖНА, ЧТОБЫ FASTLANE НЕ ДУМАЛ, ЧТО ОН НА MAC APP
-        FASTLANE_PLATFORM_NAME: "ios"
-      xcode: latest
-    
+      
+      xcode: latest # Используем последнюю версию Xcode
+      
     scripts:
+      
       - name: Set up keychain
-        script: keychain initialize
-          
-      - name: Force Generate Signing Files (Via Fastfile)
         script: |
-          mkdir -p fastlane
-
-          cat <<EOF > fastlane/Fastfile
-          # Принудительно ставим платформу по умолчанию
-          default_platform(:ios)
+          # Инициализация связки ключей
+          keychain initialize
           
-          platform :ios do
-            lane :setup_signing do
-              # Дублируем принудительное переключение контекста на iOS
-              ENV['FASTLANE_PLATFORM_NAME'] = 'ios'
-              
-              api_key = app_store_connect_api_key(
-                key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
-                issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
-                key_content: ENV['APP_STORE_CONNECT_PRIVATE_KEY'],
-                duration: 1200,
-                in_house: false
-              )
-
-              # Генерируем Сертификат
-              # force: true - создает новый ключ
-              get_certificates(
-                api_key: api_key,
-                type: "distribution",
-                platform: "ios", 
-                readonly: false,
-                force: true 
-              )
-
-              # Генерируем Профиль
-              get_provisioning_profile(
-                api_key: api_key,
-                app_identifier: ENV['BUNDLE_ID'],
-                type: "appstore",
-                platform: "ios",
-                readonly: false,
-                force: true
-              )
-            end
-          end
-          EOF
+      - name: Fetch signing files
+        script: |
+          # Скачиваем профили, используя P8 ключ
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE --create
+            
+      - name: Use system default keychain and install certificates
+        script: |
+          # Установка P12-сертификата (если загружен в UI)
+          keychain add-certificates
           
-          # ВАЖНО: Запускаем с указанием скоупа ios
-          fastlane ios setup_signing
-
       - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
+        script: |
+          # Применяем скачанные профили к проекту
+          xcode-project use-profiles
           
       - name: Build ipa for distribution
         script: |
+          # Сборка ipa с использованием ваших схемы и проекта
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
@@ -80,7 +49,9 @@ workflows:
       
     publishing:
       app_store_connect:
+        # Используем переменные, загруженные из группы 'app_store_credentials'
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
+        submit_to_testflight: true # Отправляем билд в TestFlight
+
