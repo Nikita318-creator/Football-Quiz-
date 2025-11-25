@@ -13,30 +13,33 @@ workflows:
         XCODE_SCHEME: "FootbollQuize"
       
       xcode: latest # Используем последнюю версию Xcode
-      
+    
     scripts:
       
-      - name: Set up keychain
+      # 1. ГЕНЕРАЦИЯ СЕРТИФИКАТА И УСТАНОВКА В СВЯЗКУ КЛЮЧЕЙ
+      - name: Generate and Install Signing Certificate
         script: |
-          # Инициализация связки ключей
-          keychain initialize
+          # Эта команда использует P8-ключ для создания (если нет) или 
+          # загрузки (если есть) сертификата iOS Distribution, 
+          # включая приватный ключ, и устанавливает его в связку ключей.
+          app-store-connect generate-certificate \
+            --type IOS_DISTRIBUTION
           
-      - name: Fetch signing files
+      # 2. ПОЛУЧЕНИЕ ИЛИ СОЗДАНИЕ ПРОФИЛЕЙ PROVISIONING
+      - name: Fetch Provisioning Profiles
         script: |
-          # Скачиваем профили, используя P8 ключ
+          # Теперь, когда сертификат установлен, эта команда может 
+          # успешно создать или загрузить профиль provisioning.
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE --create
-            
-     # УДАЛИТЬ ИЛИ ПРОПУСТИТЬ ШАГ С РУЧНОЙ УСТАНОВКОЙ .P12
-  # - name: Use system default keychain and install certificates
-  #   script: |
-  #     keychain add-certificates
           
+      # 3. ПРИМЕНЕНИЕ ПРОФИЛЕЙ К ПРОЕКТУ
       - name: Set up code signing settings on Xcode project
         script: |
           # Применяем скачанные профили к проекту
           xcode-project use-profiles
           
+      # 4. СБОРКА IPA
       - name: Build ipa for distribution
         script: |
           # Сборка ipa с использованием ваших схемы и проекта
