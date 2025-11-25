@@ -126,11 +126,11 @@ class SettingsVC: UIViewController {
     }
 
     @objc private func handleTerms() {
-        openUrl("https://google.com") // test111
+        openUrl("https://www.termsfeed.com/live/52bf989a-082f-4ff1-ad83-56ccbec401a5")
     }
 
     @objc private func handlePrivacy() {
-        openUrl("https://google.com") // test111
+        openUrl("https://www.termsfeed.com/live/3a6c65cd-901b-4cc2-a8f9-b88d8996d618")
     }
     
     private func openUrl(_ urlString: String) {
