@@ -10,6 +10,8 @@ workflows:
         BUNDLE_ID: "com.footmastrs.socc"
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
         XCODE_SCHEME: "FootbollQuize"
+        # ЭТА ПЕРЕМЕННАЯ КРИТИЧЕСКИ ВАЖНА, ЧТОБЫ FASTLANE НЕ ДУМАЛ, ЧТО ОН НА MAC APP
+        FASTLANE_PLATFORM_NAME: "ios"
       xcode: latest
     
     scripts:
@@ -21,10 +23,14 @@ workflows:
           mkdir -p fastlane
 
           cat <<EOF > fastlane/Fastfile
+          # Принудительно ставим платформу по умолчанию
           default_platform(:ios)
           
           platform :ios do
             lane :setup_signing do
+              # Дублируем принудительное переключение контекста на iOS
+              ENV['FASTLANE_PLATFORM_NAME'] = 'ios'
+              
               api_key = app_store_connect_api_key(
                 key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
                 issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -34,11 +40,11 @@ workflows:
               )
 
               # Генерируем Сертификат
-              # platform: "ios" - ОБЯЗАТЕЛЬНО, иначе он думает, что мы на Mac
+              # force: true - создает новый ключ
               get_certificates(
                 api_key: api_key,
                 type: "distribution",
-                platform: "ios",
+                platform: "ios", 
                 readonly: false,
                 force: true 
               )
@@ -56,7 +62,8 @@ workflows:
           end
           EOF
           
-          fastlane setup_signing
+          # ВАЖНО: Запускаем с указанием скоупа ios
+          fastlane ios setup_signing
 
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
