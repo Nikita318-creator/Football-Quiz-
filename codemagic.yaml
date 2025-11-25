@@ -18,16 +18,13 @@ workflows:
           
       - name: Force Generate Signing Files (Via Fastfile)
         script: |
-          # 1. Создаем папку для Fastlane, если её нет
           mkdir -p fastlane
 
-          # 2. Создаем Fastfile прямо на лету
-          # Это решает проблему с видимостью классов и передачей параметров
           cat <<EOF > fastlane/Fastfile
           default_platform(:ios)
+          
           platform :ios do
             lane :setup_signing do
-              # Настраиваем API Key
               api_key = app_store_connect_api_key(
                 key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
                 issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -36,10 +33,12 @@ workflows:
                 in_house: false
               )
 
-              # Генерируем Сертификат (force: true создает НОВЫЙ с ключом локально)
+              # Генерируем Сертификат
+              # platform: "ios" - ОБЯЗАТЕЛЬНО, иначе он думает, что мы на Mac
               get_certificates(
                 api_key: api_key,
                 type: "distribution",
+                platform: "ios",
                 readonly: false,
                 force: true 
               )
@@ -49,6 +48,7 @@ workflows:
                 api_key: api_key,
                 app_identifier: ENV['BUNDLE_ID'],
                 type: "appstore",
+                platform: "ios",
                 readonly: false,
                 force: true
               )
@@ -56,7 +56,6 @@ workflows:
           end
           EOF
           
-          # 3. Запускаем этот лейн
           fastlane setup_signing
 
       - name: Set up code signing settings on Xcode project
