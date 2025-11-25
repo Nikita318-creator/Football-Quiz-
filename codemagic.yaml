@@ -7,7 +7,7 @@ workflows:
       groups:
         - app_store_credentials
       vars:
-        BUNDLE_ID: "com.adblockerapp"
+        BUNDLE_ID: "com.footmastrs.socc"
         
         XCODE_PROJECT: "FootbollQuize.xcodeproj"
         XCODE_SCHEME: "FootbollQuize"
