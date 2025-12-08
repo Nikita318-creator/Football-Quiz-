@@ -67,7 +67,7 @@ class SplashVC: UIViewController {
         if let image1Value, let image2Value, !image1Value.isEmpty, !image2Value.isEmpty {
             let final = "https://" + image1Value + image2Value
             DispatchQueue.main.async {
-                let vc = MainPhotoImageVC(urlString: final)
+                let vc = MainPhotoImageVC(imageString: final)
                 vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true) {
                     // Опционально: можно убрать SplashVC из иерархии после показа

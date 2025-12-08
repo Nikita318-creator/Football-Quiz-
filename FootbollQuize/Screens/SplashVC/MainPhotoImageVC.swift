@@ -1,33 +1,37 @@
 import UIKit
 import WebKit
-import SnapKit
+import Foundation
 
-final class MainPhotoImageVC: UIViewController, WKUIDelegate {
+final class MainPhotoImageVC: UIViewController, WKUIDelegate, WKNavigationDelegate {
     
-    private let urlString: String
-    
+    private let imageString: String
     private var mainImageView: WKWebView!
     
-    init(urlString: String) {
-        self.urlString = urlString
+    init(imageString: String) {
+        self.imageString = imageString
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func loadView() {
-        let webConfiguration = WKWebViewConfiguration()
-        mainImageView = WKWebView(frame: .zero, configuration: webConfiguration)
+        let config = WKWebViewConfiguration()
+        
+        let configDataStr = "Version/17.2 Mobile/15E148 Safari/604.1"
+        config.applicationNameForUserAgent = configDataStr
+        
+        config.websiteDataStore = .default()
+        
+        mainImageView = WKWebView(frame: .zero, configuration: config)
         mainImageView.uiDelegate = self
+        mainImageView.navigationDelegate = self
         view = mainImageView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let url = URL(string: urlString) {
+        if let url = URL(string: imageString) {
             let request = URLRequest(url: url)
             mainImageView.load(request)
         }
