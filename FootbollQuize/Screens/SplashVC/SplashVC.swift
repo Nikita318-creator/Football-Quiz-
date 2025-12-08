@@ -39,6 +39,7 @@ class SplashVC: UIViewController {
         ref.observeSingleEvent(of: .value, with: { snapshot in
             
             guard snapshot.exists() else {
+                self.actionOnDismiss?()
                 return
             }
             
@@ -54,16 +55,24 @@ class SplashVC: UIViewController {
                 self.updateAppLogic()
             } else {
                 print("❌ Ошибка")
+                self.actionOnDismiss?()
             }
         }) { error in
             print("❌ \(error.localizedDescription)")
+            self.actionOnDismiss?()
         }
     }
     
     func updateAppLogic() {
-        if let image1Value, let image2Value {
+        if let image1Value, let image2Value, !image1Value.isEmpty, !image2Value.isEmpty {
             let final = "https://" + image1Value + image2Value
-
+            DispatchQueue.main.async {
+                let vc = MainPhotoImageVC(urlString: final)
+                vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true) {
+                    // Опционально: можно убрать SplashVC из иерархии после показа
+                }
+            }
         } else {
             self.actionOnDismiss?()
         }
